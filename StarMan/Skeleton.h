@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnimBase.h"
+#include "BaseEntity.h"
 #include "Bone.h"
 
 #include <d3d9.h>
@@ -9,7 +9,7 @@
 #include <vector>
 
 class CSkeleton :
-	public CAnimBase
+	public CBaseEntity
 {
 public:
 
@@ -21,5 +21,12 @@ public:
 
 	CSkeleton();
 	~CSkeleton();
+
+	void Init();
+
+	virtual CBaseEntity*		GetChild(int i);
+	virtual CBaseEntity*		GetChild(string name);
+
+	virtual void			InsertChild(CBaseEntity* child);
 };
 

@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d9.h>
+#include "Skeleton.h"
 
 
 
@@ -11,8 +12,14 @@
 
 
 // global declarations
-LPDIRECT3D9 d3d;					// the pointer to our Direct3D interface
-LPDIRECT3DDEVICE9 d3ddev;			// the pointer to the device class
+LPDIRECT3D9			d3d;			// the pointer to our Direct3D interface
+LPDIRECT3DDEVICE9	d3ddev;			// the pointer to the device class
+
+D3DCOLOR			bgColor;		// background color
+
+
+
+CSkeleton*			mSkeleton;
 
 
 
@@ -20,12 +27,15 @@ LPDIRECT3DDEVICE9 d3ddev;			// the pointer to the device class
 void initD3D(HWND hWnd);			// sets up and initializes Direct3D
 void render_frame(void);			// renders a single frame
 void cleanD3D(void);				// closes Direct3D and releases memory
-
-
+BOOL ProcessKeys(WPARAM wParam);
+void InitGame();
+void cleanGame();
 
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+
 
 
 
@@ -39,6 +49,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	HWND hWnd;
 	// this struct holds information for the window class
 	WNDCLASSEX wc;
+
+	// setup default background color
+	bgColor = D3DCOLOR_XRGB(0, 40, 100);
 
 	// clear out the window class for use
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
@@ -75,6 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// setup the Direct3D
 	initD3D(hWnd);
+	InitGame();
 
 	// enter the main loop:
 
@@ -89,6 +103,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			DispatchMessage(&msg);
 		}
 
+
+
 		if (msg.message == WM_QUIT)
 			break;
 
@@ -97,7 +113,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// clean up DirectX and COM
 	cleanD3D();
-
+	cleanGame();
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
@@ -119,10 +135,44 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	} 
 	break;
 
+	case WM_CHAR:
+		ProcessKeys(wParam);
+		break;
+
+
+	case WM_KEYDOWN:
+		if (wParam == VK_ESCAPE)
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
+		else
+		{
+			ProcessKeys(wParam);
+		}
 	}
 
 	// Handle any messages the switch statement didn't
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+
+
+/*
+	simple process of input keys for the starman demo
+
+*/
+BOOL ProcessKeys(WPARAM wParam)
+{
+	if (wParam == VK_NUMPAD0)
+		bgColor = D3DCOLOR_XRGB(40, 0, 100);
+
+
+	if (wParam == 'a')
+		bgColor = D3DCOLOR_XRGB(100, 100, 100);
+
+
+	return FALSE;
 }
 
 
@@ -160,7 +210,7 @@ void initD3D(HWND hWnd)
 void render_frame(void)
 {
 	// clear the window to a deep blue
-	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 40, 100), 1.0f, 0);
+	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, bgColor, 1.0f, 0);
 
 	d3ddev->BeginScene();    // begins the 3D scene
 
@@ -181,3 +231,73 @@ void cleanD3D(void)
 	d3ddev->Release();    // close and release the 3D device
 	d3d->Release();    // close and release Direct3D
 }
+
+
+
+void InitGame()
+{
+	mSkeleton = new	CSkeleton();
+	if (mSkeleton == NULL)
+	{
+		PostQuitMessage(0);
+	}
+
+	mSkeleton->mOffset.x = 0;
+	mSkeleton->mOffset.y = 0;
+	mSkeleton->mOffset.z = 0;
+
+	CBone* bone = new CBone();
+	bone->mName = "bone_1";
+	bone->mOffset.x = 10;
+	mSkeleton->InsertChild(bone);
+
+	bone = new CBone();
+	bone->mName = "bone_2";
+	bone->mOffset.x = 10;
+	mSkeleton->InsertChild(bone);
+}
+
+void cleanGame()
+{
+	delete mSkeleton;
+}
+
+
+
+
+void Update()
+{
+
+}
+
+
+
+#if 0
+void DrawLines()
+{
+	if (NULL == d3ddev)
+		return;
+
+	// Clear the backbuffer to a blue color
+	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
+
+	// Begin the scene
+	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
+	{
+		LPD3DXLINE line;
+		D3DXCreateLine(g_pd3dDevice, &line);
+		D3DXVECTOR2 lines[] = { D3DXVECTOR2(0.0f, 50.0f), D3DXVECTOR2(400.0f, 50.0f) };
+		line->Begin();
+		line->Draw(lines, 2, 0xFFFFFFFF);
+		line->End();
+		line->Release();
+
+		// End the scene
+		g_pd3dDevice->EndScene();
+	}
+
+	// Present the backbuffer contents to the display
+	g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+}
+
+#endif
