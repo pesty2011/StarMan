@@ -20,6 +20,14 @@ string CBaseEntity::GetName()
 }
 
 
+
+void CBaseEntity::SetName(string name)
+{
+	mName = name;
+}
+
+
+
 int CBaseEntity::NumChildren()
 {
 	return 0;

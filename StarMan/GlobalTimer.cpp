@@ -4,9 +4,11 @@
 
 GlobalTimer::GlobalTimer()
 {
+
 }
 
 
 GlobalTimer::~GlobalTimer()
 {
+
 }

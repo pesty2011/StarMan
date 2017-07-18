@@ -3,7 +3,9 @@
 #include <windowsx.h>
 #include <d3d9.h>
 #include "Skeleton.h"
-
+#include "Terrain.h"
+#include "MainCamera.h"
+#include "GlobalTimer.h"
 
 
 // include the Direct3D Library file
@@ -20,7 +22,8 @@ D3DCOLOR			bgColor;		// background color
 
 
 CSkeleton*			mSkeleton;
-
+CMainCamera*		mCamera;
+CTerrain*			mTerrain;
 
 
 // function prototypes
@@ -215,6 +218,7 @@ void render_frame(void)
 	d3ddev->BeginScene();    // begins the 3D scene
 
 							 // do 3D rendering on the back buffer here
+	mTerrain->Render();
 
 	d3ddev->EndScene();    // ends the 3D scene
 
@@ -236,11 +240,22 @@ void cleanD3D(void)
 
 void InitGame()
 {
+	// create the camera
+	mCamera = new CMainCamera(d3ddev);
+
+
+	// create a terrain
+	mTerrain = new CTerrain(d3ddev);
+
+
+	// create a skeleton
 	mSkeleton = new	CSkeleton();
 	if (mSkeleton == NULL)
 	{
 		PostQuitMessage(0);
 	}
+
+
 
 	mSkeleton->mOffset.x = 0;
 	mSkeleton->mOffset.y = 0;

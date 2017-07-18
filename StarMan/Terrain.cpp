@@ -2,20 +2,20 @@
 
 
 
-Terrain::Terrain(LPDIRECT3DDEVICE9 d3dDevice)
+CTerrain::CTerrain(LPDIRECT3DDEVICE9 d3dDevice)
 {
 	device = d3dDevice;
 }
 
 
-Terrain::~Terrain()
+CTerrain::~CTerrain()
 {
 }
 
 
 
 
-void Terrain::Init(UINT16 gridX, UINT16 gridZ, D3DCOLOR color, float size)
+void CTerrain::Init(UINT16 gridX, UINT16 gridZ, D3DCOLOR color, float size)
 {
 	// Check if the size of the grid is null
 	if (size <= 0)
@@ -50,3 +50,36 @@ void Terrain::Init(UINT16 gridX, UINT16 gridZ, D3DCOLOR color, float size)
 }
 
 
+void CTerrain::Update(float deltaTime)
+{
+
+
+
+}
+
+
+void CTerrain::Render()
+{
+	D3DXVECTOR3 vertexList[2];
+	vertexList[0].x = 0;
+	vertexList[0].y = 0;
+	vertexList[0].z = 0;
+
+	vertexList[1].x = 0.1f;
+	vertexList[1].y = 0;
+	vertexList[1].z = 0;
+
+	// Draw the line.
+	LPD3DXLINE _line;
+	D3DXCreateLine(device, &_line);
+	D3DXMATRIX tempFinal;
+	
+	device->GetTransform(D3DTS_WORLD, &tempFinal);
+//	D3DXMATRIX tempFinal = TheCamera.m_matView * matProj;
+
+
+	_line->Begin();
+	_line->SetWidth(20.0f);
+	_line->DrawTransform(vertexList, 2, &tempFinal, D3DCOLOR_RGBA(0x40, 0xFF, 0x80, 0xFF));
+	_line->End();
+}

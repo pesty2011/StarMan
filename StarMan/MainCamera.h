@@ -1,12 +1,12 @@
 #pragma once
 #include <d3d9.h>
 
-class MainCamera
+class CMainCamera
 {
 	LPDIRECT3DDEVICE9	d3dDevice;
 
 public:
-	MainCamera(LPDIRECT3DDEVICE9 d3dDevice);
-	~MainCamera();
+	CMainCamera(LPDIRECT3DDEVICE9 d3dDevice);
+	~CMainCamera();
 };
 

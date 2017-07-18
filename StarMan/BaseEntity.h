@@ -33,5 +33,6 @@ public:
 
 
 	string					GetName();
+	void					SetName(string name);
 };
 

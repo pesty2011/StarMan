@@ -5,7 +5,7 @@
 
 
 
-class Terrain
+class CTerrain
 {
 	LPDIRECT3DDEVICE9	device;
 
@@ -17,10 +17,11 @@ class Terrain
 
 
 public:
-	Terrain(LPDIRECT3DDEVICE9 d3dDevice);
-	~Terrain();
+	CTerrain(LPDIRECT3DDEVICE9 d3dDevice);
+	~CTerrain();
 
 	void Init(UINT16 width, UINT16 height, D3DCOLOR color, float size);
-
+	void Update(float deltaTime);
+	void Render();
 };
 
