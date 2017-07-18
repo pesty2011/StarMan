@@ -15,6 +15,7 @@ class CTerrain
 		DWORD color;
 	};
 
+	D3DXVECTOR3 vertexGridList[40];					// 10x10 grid
 
 public:
 	CTerrain(LPDIRECT3DDEVICE9 d3dDevice);
@@ -23,5 +24,8 @@ public:
 	void Init(UINT16 width, UINT16 height, D3DCOLOR color, float size);
 	void Update(float deltaTime);
 	void Render();
+
+protected:
+	void CreateGrid();
 };
 

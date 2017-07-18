@@ -5,6 +5,7 @@
 CTerrain::CTerrain(LPDIRECT3DDEVICE9 d3dDevice)
 {
 	device = d3dDevice;
+	CreateGrid();
 }
 
 
@@ -82,4 +83,51 @@ void CTerrain::Render()
 	_line->SetWidth(20.0f);
 	_line->DrawTransform(vertexList, 2, &tempFinal, D3DCOLOR_RGBA(0x40, 0xFF, 0x80, 0xFF));
 	_line->End();
+
+
+	_line->Begin();
+	_line->SetWidth(20.0f);
+	_line->DrawTransform(vertexGridList, 40, &tempFinal, D3DCOLOR_RGBA(0xFF, 0x80, 0x00, 0xFF));
+	_line->End();
+
+
+}
+
+
+void CTerrain::CreateGrid()
+{
+	int len = 100;
+	int inc = 10;
+	int count = 0;
+
+	for (int i = 0; i < 20; i += 2)
+	{
+		vertexGridList[i].x = -len / 2;
+		vertexGridList[i].y = 0;
+		vertexGridList[i].z = count;
+
+		vertexGridList[i + 1].x = len / 2;
+		vertexGridList[i + 1].y = 0;
+		vertexGridList[i + 1].z = count;
+
+		count += inc;
+	}
+
+
+	count = 0;
+	for (int i = 20; i < 40; i += 2)
+	{
+		vertexGridList[i].x = count;
+		vertexGridList[i].y = 0;
+		vertexGridList[i].z = -len / 2;
+
+		vertexGridList[i + 1].x = count;
+		vertexGridList[i + 1].y = 0;
+		vertexGridList[i + 1].z = len / 2;
+
+		count += inc;
+	}
+
+
+
 }

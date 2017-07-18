@@ -33,7 +33,7 @@ void cleanD3D(void);				// closes Direct3D and releases memory
 BOOL ProcessKeys(WPARAM wParam);
 void InitGame();
 void cleanGame();
-
+void Update();
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -111,6 +111,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (msg.message == WM_QUIT)
 			break;
 
+		Update();
 		render_frame();
 	}
 
@@ -282,7 +283,7 @@ void cleanGame()
 
 void Update()
 {
-
+	mCamera->Update(0);
 }
 
 
