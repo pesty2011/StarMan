@@ -11,7 +11,7 @@ CSkeleton::CSkeleton()
 
 CSkeleton::~CSkeleton()
 {
-	for (int i = 0; i < mBones.size(); i++)
+	for (size_t i = 0; i < mBones.size(); i++)
 	{
 		CBone* bone = mBones[i];
 		delete bone;
@@ -24,8 +24,6 @@ CSkeleton::~CSkeleton()
 void CSkeleton::Init()
 {
 	mType = EN_Skeleton;
-	memset(&mOffset, 0, sizeof(D3DVECTOR));
-	memset(&mAngle, 0, sizeof(D3DVECTOR));
 	mParent = NULL;
 }
 
@@ -38,7 +36,7 @@ void CSkeleton::Init()
 ---------------------------------------------------------------------------- */
 CBaseEntity* CSkeleton::GetChild(int i)
 {
-	if (mBones.size() <= i)
+	if (mBones.size() <= (size_t)i)
 	{
 		return mBones[i];
 	}

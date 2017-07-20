@@ -2,10 +2,6 @@
 
 #include "BaseEntity.h"
 #include "Bone.h"
-
-#include <d3d9.h>
-#include <d3d9types.h>
-#include <d3d9helper.h>
 #include <vector>
 
 class CSkeleton :
@@ -13,8 +9,8 @@ class CSkeleton :
 {
 public:
 
-	D3DVECTOR				mOffset;
-	D3DVECTOR				mAngle;
+	float					mOffset[3];
+	float					mAngle[3];
 
 	std::vector<CBone*>		mBones;
 

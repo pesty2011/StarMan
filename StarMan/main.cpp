@@ -39,8 +39,8 @@ bool g_mouse_right_down = false;
 
 
 // Movement settings
-const float g_translation_speed = 0.05;
-const float g_rotation_speed = M_PI / 180 * 0.2;
+const float g_translation_speed = 0.05f;
+const float g_rotation_speed = M_PI / (180.0f * 0.2f);
 
 
 
@@ -79,23 +79,25 @@ void Grid()
 
 	for (int i = -50; i < 50; i++) {
 		glBegin(GL_LINES);
-		glVertex3f(i, 0, -50);
-		glVertex3f(i, 0, 50);
+		glVertex3f((float)i, (float)0, (float)-50);
+		glVertex3f((float)i, (float)0, (float)50);
 		glEnd();
 	}
 
 	for (int i = -50; i < 50; i++) {
 		glBegin(GL_LINES);
-		glVertex3f(-50, 0, i);
-		glVertex3f(50, 0, i);
+		glVertex3f((float)-50, (float)0, (float)i);
+		glVertex3f((float)50, (float)0, (float)i);
 		glEnd();
 	}
 
 	glPopMatrix();
 }
 
+
+
 void Display(void) {
-	glClearColor(0.3, 0.3, 0.3, 1.0); //clear the screen to black
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f); //clear the screen to black
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
 	glLoadIdentity();
 
@@ -103,11 +105,15 @@ void Display(void) {
 
 	glColor3f(0, 1, 0);
 
-	glutWireTeapot(0.5);
+//	glutWireTeapot(0.5);
+
+	glutWireCube(1.0);
 	DrawGrid();
 
 	glutSwapBuffers(); //swap the buffers
 }
+
+
 
 void Reshape(int w, int h) {
 	g_viewport_width = w;
@@ -120,6 +126,8 @@ void Reshape(int w, int h) {
 	gluPerspective(60, (GLfloat)w / (GLfloat)h, 0.1, 100.0); //set the perspective (angle of sight, width, height, ,depth)
 	glMatrixMode(GL_MODELVIEW); //set the matrix back to model
 }
+
+
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -206,8 +214,6 @@ void Mouse(int button, int state, int x, int y)
 }
 
 
-
-
 void MouseMotion(int x, int y)
 {
 	// This variable is hack to stop glutWarpPointer from triggering an event callback to Mouse(...)
@@ -236,6 +242,16 @@ void MouseMotion(int x, int y)
 		just_warped = true;
 	}
 }
+
+
+
+void Update(float deltaTime)
+{
+
+
+}
+
+
 
 
 void DrawGrid()
