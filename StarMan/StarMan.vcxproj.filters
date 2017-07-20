@@ -22,6 +22,9 @@
     <Filter Include="Entities">
       <UniqueIdentifier>{a8fbe013-bd79-48b8-b4ca-7f5dc03fb7b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{52a90430-e077-4271-95b4-ec344f8c3b6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -45,6 +48,9 @@
     <ClCompile Include="BaseEntity.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bone.h">
@@ -64,6 +70,9 @@
     </ClInclude>
     <ClInclude Include="BaseEntity.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

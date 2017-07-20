@@ -14,7 +14,9 @@ class CMainCamera
 {
 	LPDIRECT3DDEVICE9	d3dDevice;
 	D3DXVECTOR3			lookAt, eye, up;
-	D3DXMATRIX			view, proj;
+	D3DXMATRIX			view, proj, world;
+
+	float m_pitch, m_yaw;
 
 public:
 	CMainCamera(LPDIRECT3DDEVICE9 d3dDevice);
@@ -24,5 +26,15 @@ public:
 	void LookAt(D3DVECTOR lookat);
 
 	void CreateProjectionMatrix(UINT16 width, UINT16 height);
+	void CreateWorldMatrix();
+	void CreateViewMatrix();
+
+	const D3DXMATRIX*		GetWorldMatrix() { CreateWorldMatrix(); return &world; }
+	const D3DXMATRIX*		GetProjectionMatrix() { return &proj; }
+	const D3DXMATRIX*		GetViewMatrix() { return &view; }
+
+	void Move(WPARAM key);
+
+
 };
 

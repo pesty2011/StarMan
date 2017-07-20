@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <d3d9.h>
+#include <dinput.h>
 #include "Skeleton.h"
 #include "Terrain.h"
 #include "MainCamera.h"
@@ -10,20 +11,22 @@
 
 // include the Direct3D Library file
 #pragma comment (lib, "d3d9.lib")
+#pragma comment (lib, "dinput8.lib")
 
 
 
 // global declarations
-LPDIRECT3D9			d3d;			// the pointer to our Direct3D interface
-LPDIRECT3DDEVICE9	d3ddev;			// the pointer to the device class
+LPDIRECT3D9				d3d;			// the pointer to our Direct3D interface
+LPDIRECT3DDEVICE9		d3ddev;			// the pointer to the device class
+LPDIRECTINPUT8			di;
+LPDIRECTINPUTDEVICE8	DIKeyboard;
+D3DCOLOR				bgColor;		// background color
+int						screenWidth = 1024;
+int						screenHeight = 768;
 
-D3DCOLOR			bgColor;		// background color
-
-
-
-CSkeleton*			mSkeleton;
-CMainCamera*		mCamera;
-CTerrain*			mTerrain;
+CSkeleton*				mSkeleton;
+CMainCamera*			mCamera;
+CTerrain*				mTerrain;
 
 
 // function prototypes
@@ -33,10 +36,31 @@ void cleanD3D(void);				// closes Direct3D and releases memory
 BOOL ProcessKeys(WPARAM wParam);
 void InitGame();
 void cleanGame();
-void Update();
+void Update(float dt);
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+
+#if false
+
+void InitDirectInput(HWND handle)
+{
+	DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&di, NULL);
+	if (di != NULL)
+	{
+		di->CreateDevice(GUID_SysKeyboard, &DIKeyboard, NULL);
+		if (DIKeyboard != NULL)
+		{
+			DIKeyboard->SetDataFormat(&c_dfDIKeyboard);
+			DIKeyboard->SetCooperativeLevel(handle, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
+			DIKeyboard->Acquire();
+		}
+	}
+}
+
+#endif
+
 
 
 
@@ -79,8 +103,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		WS_OVERLAPPEDWINDOW,		// window style
 		300,						// x-position of the window
 		300,						// y-position of the window
-		800,						// width of the window
-		600,						// height of the window
+		screenWidth,				// width of the window
+		screenHeight,				// height of the window
 		NULL,						// we have no parent window, NULL
 		NULL,						// we aren't using menus, NULL
 		hInstance,					// application handle
@@ -97,6 +121,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// this struct holds Windows event messages
 	MSG msg;
+	__int64 cntsPerSec = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&cntsPerSec);
+	float secsPerCnt = 1.0f / (float)cntsPerSec;
+
+	__int64 prevTimeStamp = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&prevTimeStamp);
+
+
 
 	while (TRUE)
 	{
@@ -111,8 +143,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		if (msg.message == WM_QUIT)
 			break;
 
-		Update();
+		__int64 currTimeStamp = 0;
+		QueryPerformanceFrequency((LARGE_INTEGER*)&currTimeStamp);			// what is the current time stamp
+		float dt = (currTimeStamp - prevTimeStamp) * secsPerCnt;			// get out delta time
+
+
+		Update(dt);
 		render_frame();
+
+
+		prevTimeStamp = currTimeStamp;										// save off the current time to be previous
 	}
 
 	// clean up DirectX and COM
@@ -152,6 +192,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		}
 		else
 		{
+			mCamera->Move(wParam);
 			ProcessKeys(wParam);
 		}
 	}
@@ -218,10 +259,16 @@ void render_frame(void)
 
 	d3ddev->BeginScene();    // begins the 3D scene
 
-							 // do 3D rendering on the back buffer here
+//	d3ddev->SetTransform(D3DTS_PROJECTION, mCamera->GetProjectionMatrix());
+//	d3ddev->SetTransform(D3DTS_VIEW, mCamera->GetViewMatrix());
+							 
+	// do 3D rendering on the back buffer here
 	mTerrain->Render();
 
-	d3ddev->EndScene();    // ends the 3D scene
+
+
+
+	d3ddev->EndScene();							// ends the 3D scene
 
 	d3ddev->Present(NULL, NULL, NULL, NULL);    // displays the created frame
 }
@@ -281,39 +328,10 @@ void cleanGame()
 
 
 
-void Update()
+void Update(float dt)
 {
-	mCamera->Update(0);
+	mCamera->Update(dt);
 }
 
 
 
-#if 0
-void DrawLines()
-{
-	if (NULL == d3ddev)
-		return;
-
-	// Clear the backbuffer to a blue color
-	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
-
-	// Begin the scene
-	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
-	{
-		LPD3DXLINE line;
-		D3DXCreateLine(g_pd3dDevice, &line);
-		D3DXVECTOR2 lines[] = { D3DXVECTOR2(0.0f, 50.0f), D3DXVECTOR2(400.0f, 50.0f) };
-		line->Begin();
-		line->Draw(lines, 2, 0xFFFFFFFF);
-		line->End();
-		line->Release();
-
-		// End the scene
-		g_pd3dDevice->EndScene();
-	}
-
-	// Present the backbuffer contents to the display
-	g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-}
-
-#endif
