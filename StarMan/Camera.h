@@ -14,7 +14,7 @@ class Camera
 {
 public:
 	Camera() { Init(); }
-	~Camera(){}
+	~Camera() {}
 
 	void Init();
 	void Refresh();
@@ -23,6 +23,9 @@ public:
     void GetDirectionVector(float &x, float &y, float &z);
 	void SetYaw(float angle);
 	void SetPitch(float angle);
+	float GetYaw() { return m_yaw; }
+	float GetPitch() { return m_pitch; }
+
 
 	// Navigation
 	void Move(float incr);
@@ -30,12 +33,13 @@ public:
 	void Fly(float incr);
 	void RotateYaw(float angle);
 	void RotatePitch(float angle);
+	void Reset();
 
 private:
-	float m_x, m_y, m_z;   // Position
-    float m_lx, m_ly, m_lz; // Direction vector of where we are looking at
-	float m_yaw, m_pitch; // Various rotation angles
-	float m_strafe_lx, m_strafe_lz; // Always 90 degree to direction vector
+	float m_x, m_y, m_z;				// Position
+    float m_lx, m_ly, m_lz;				// Direction vector of where we are looking at
+	float m_yaw, m_pitch;				// Various rotation angles
+	float m_strafe_lx, m_strafe_lz;		// Always 90 degree to direction vector
 };
 
 #endif

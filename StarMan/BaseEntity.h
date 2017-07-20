@@ -11,9 +11,11 @@ enum EntityTypes
 	EN_Unknown,
 	EN_Bone,
 	EN_Skeleton,
-	
-
+	EN_Actor,
+	EN_Clip,
 };
+
+
 
 class CBaseEntity
 {

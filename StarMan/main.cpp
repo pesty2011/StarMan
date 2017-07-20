@@ -5,10 +5,16 @@
 #include <iostream>
 #include <cmath>
 #include "Camera.h"
+#include "Helpers\GameTimer.h"
+#include "BVH\BVH.h"
+
+
 
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
+
+
 
 
 using namespace std;
@@ -22,12 +28,20 @@ void MouseMotion(int x, int y);
 void Mouse(int button, int state, int x, int y);
 void Timer(int value);
 void Idle();
-
+void Update(int value);
 
 void DrawGrid();
 void Grid();
 
+
+void LoadBVH();
+BVH g_bvh;
+float animationTime = 0.0f;
+int frameNum = 0;
+
 Camera g_camera;
+GameTimer g_timer;
+
 bool g_key[256];
 bool g_shift_down = false;
 bool g_fps_mode = false;
@@ -40,17 +54,20 @@ bool g_mouse_right_down = false;
 
 // Movement settings
 const float g_translation_speed = 0.05f;
-const float g_rotation_speed = M_PI / (180.0f * 0.2f);
+//const float g_rotation_speed = M_PI / (180.0f * 0.2f);
+const float g_rotation_speed = M_PI / (180.0f * 2.5f);
 
 
 
+int main(int argc, char **argv) 
+{
+	LoadBVH();
 
 
-int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(1280, 1024);
-	glutCreateWindow("StarMan - Hit SPACEBAR to START");
+	glutCreateWindow("StarMan: Hit SPACEBAR to START");
 	glDepthRange(0.1f, 1000.0f);
 
 	glutIgnoreKeyRepeat(1);
@@ -65,12 +82,23 @@ int main(int argc, char **argv) {
 	glutKeyboardUpFunc(KeyboardUp);
 	glutIdleFunc(Idle);
 
+	
 	glutTimerFunc(1, Timer, 0);
+	glutTimerFunc(1, Update, 1);
 	glutMainLoop();
-
 
 	return 0;
 }
+
+
+void LoadBVH()
+{
+	g_bvh.Load("C:\\Users\\Rob\\Desktop\\ChaCha001.bvh");
+
+//	g_bvh.Load(".\\bvh\\ChaCha001.bvh");
+
+}
+
 
 void Grid()
 {
@@ -103,12 +131,17 @@ void Display(void) {
 
 	g_camera.Refresh();
 
-	glColor3f(0, 1, 0);
+	DrawGrid();
 
 //	glutWireTeapot(0.5);
+	glColor3f(0, 1.0f, 0.8f);
+	glutWireCube(1.0f);
 
-	glutWireCube(1.0);
-	DrawGrid();
+	if (g_bvh.IsLoadSuccess())
+	{
+		glColor3f(0.8, 0.8f, 1.0f);
+		g_bvh.RenderFigure(frameNum, 0.1f);
+	}
 
 	glutSwapBuffers(); //swap the buffers
 }
@@ -157,10 +190,58 @@ void Keyboard(unsigned char key, int x, int y)
 	g_key[key] = true;
 }
 
+
+
 void KeyboardUp(unsigned char key, int x, int y)
 {
 	g_key[key] = false;
 }
+
+
+
+
+void Update(int value)
+{
+	// Some camera timing stuff
+	float x, y, z;
+	g_camera.GetPos(x, y, z);
+	float yaw = g_camera.GetYaw();
+	float pitch = g_camera.GetPitch();
+	//	cout << "Camera: " << x << ", " << y << ", " << z << " Yaw: " << yaw << " Pitch: " << pitch << endl;
+
+
+	// calculate the timer for the system
+	g_timer.Tick();
+
+	float dtime = g_timer.DeltaTime();
+	float ttime = g_timer.TotalTime();
+
+//	cout << "Total Time: " << ttime << " DeltaTime: " << dtime << endl;
+
+
+	// animation timers
+	if (g_bvh.IsLoadSuccess())
+	{
+		float interval = g_bvh.GetInterval();
+		interval /= 2.0f;
+
+		animationTime += dtime;
+		if (animationTime >= interval)
+		{
+			frameNum += 2;
+			frameNum = frameNum % g_bvh.GetNumFrame();
+			animationTime = animationTime - interval;
+		}
+	}
+
+
+
+	glutTimerFunc(1, Update, 1);
+}
+
+
+
+
 
 void Timer(int value)
 {
@@ -183,6 +264,33 @@ void Timer(int value)
 		else if (g_mouse_right_down) {
 			g_camera.Fly(g_translation_speed);
 		}
+		else if (g_key['R']) 
+		{
+			// Reset the scene ...
+			g_camera.Reset();
+		}
+		else if (g_key['l'])
+		{
+#if false
+			const int  file_name_len = 256;
+			char  file_name[file_name_len] = "";
+
+
+			OPENFILENAME	open_file;
+			memset(&open_file, 0, sizeof(OPENFILENAME));
+			open_file.lStructSize = sizeof(OPENFILENAME);
+			open_file.hwndOwner = NULL;
+			open_file.lpstrFilter = "BVH Motion Data (*.bvh)\0*.bvh\0All (*.*)\0*.*\0";
+			open_file.nFilterIndex = 1;
+			open_file.lpstrFile = file_name;
+			open_file.nMaxFile = file_name_len;
+			open_file.lpstrTitle = "Select a BVH file";
+			open_file.lpstrDefExt = "bvh";
+			open_file.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+			BOOL  ret = GetOpenFileName(&open_file);
+#endif
+
+		}
 	}
 
 	glutTimerFunc(1, Timer, 0);
@@ -192,6 +300,9 @@ void Idle()
 {
 	Display();
 }
+
+
+
 
 void Mouse(int button, int state, int x, int y)
 {
@@ -245,20 +356,12 @@ void MouseMotion(int x, int y)
 
 
 
-void Update(float deltaTime)
-{
-
-
-}
-
-
-
-
 void DrawGrid()
 {
+	glPushMatrix();
+#if true
 	const double gs = 100;
 
-	glPushMatrix();
 
 
 	glColor3d(0.0, 0.0, 0.0);		// create the grid
@@ -293,7 +396,34 @@ void DrawGrid()
 
 	glEnd();
 
+#else
+
+	float  size = 1.5f;
+	int  num_x = 10, num_z = 10;
+	double  ox, oz;
+	glBegin(GL_QUADS);
+	glNormal3d(0.0, 1.0, 0.0);
+	ox = -(num_x * size) / 2;
+	for (int x = 0; x<num_x; x++, ox += size)
+	{
+		oz = -(num_z * size) / 2;
+		for (int z = 0; z<num_z; z++, oz += size)
+		{
+			if (((x + z) % 2) == 0)
+				glColor4f(1.0, 1.0, 1.0, 0.5f);
+			else
+				glColor4f(0.8, 0.8, 0.8, 0.5f);
+			glVertex3d(ox, 0.0, oz);
+			glVertex3d(ox, 0.0, oz + size);
+			glVertex3d(ox + size, 0.0, oz + size);
+			glVertex3d(ox + size, 0.0, oz);
+		}
+	}
+	glEnd();
+
+#endif
 	glPopMatrix();
+
 }
 
 

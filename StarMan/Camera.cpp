@@ -5,28 +5,34 @@
 
 void Camera::Init()
 {
-	m_yaw = 0.0;
-	m_pitch = 0.0;
-
-	SetPos(0, 0, 0);
+	Reset();
 }
 
 void Camera::Refresh()
 {
 	// Camera parameter according to Riegl's co-ordinate system
 	// x/y for flat, z for height
-	m_lx = cos(m_yaw) * cos(m_pitch);
-	m_ly = sin(m_pitch);
-	m_lz = sin(m_yaw) * cos(m_pitch);
+	m_lx = cosf(m_yaw) * cosf(m_pitch);
+	m_ly = sinf(m_pitch);
+	m_lz = sinf(m_yaw) * cosf(m_pitch);
 
-	m_strafe_lx = cos(m_yaw - M_PI_2);
-	m_strafe_lz = sin(m_yaw - M_PI_2);
+	m_strafe_lx = cosf(m_yaw - M_PI_2);
+	m_strafe_lz = sinf(m_yaw - M_PI_2);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(m_x, m_y, m_z, m_x + m_lx, m_y + m_ly, m_z + m_lz, 0.0,1.0,0.0);
 
 	//printf("Camera: %f %f %f Direction vector: %f %f %f\n", m_x, m_y, m_z, m_lx, m_ly, m_lz);
+}
+
+
+void Camera::Reset()
+{
+	m_yaw = -1.57f;
+	m_pitch = -0.1f;
+
+	SetPos(0, 2.0f, 15.0f);
 }
 
 void Camera::SetPos(float x, float y, float z)
@@ -54,21 +60,21 @@ void Camera::GetDirectionVector(float &x, float &y, float &z)
 
 void Camera::Move(float incr)
 {
-    float lx = cos(m_yaw)*cos(m_pitch);
-    float ly = sin(m_pitch);
-    float lz = sin(m_yaw)*cos(m_pitch);
+    float lx = cosf(m_yaw) * cosf(m_pitch);
+    float ly = sinf(m_pitch);
+    float lz = sinf(m_yaw) * cosf(m_pitch);
 
-	m_x = m_x + incr*lx;
-	m_y = m_y + incr*ly;
-	m_z = m_z + incr*lz;
+	m_x = m_x + incr * lx;
+	m_y = m_y + incr * ly;
+	m_z = m_z + incr * lz;
 
 	Refresh();
 }
 
 void Camera::Strafe(float incr)
 {
-	m_x = m_x + incr*m_strafe_lx;
-	m_z = m_z + incr*m_strafe_lz;
+	m_x = m_x + incr * m_strafe_lx;
+	m_z = m_z + incr * m_strafe_lz;
 
 	Refresh();
 }
@@ -89,7 +95,7 @@ void Camera::RotateYaw(float angle)
 
 void Camera::RotatePitch(float angle)
 {
-    const float limit = 89.0 * M_PI / 180.0;
+    const float limit = 89.0f * M_PI / 180.0f;
 
 	m_pitch += angle;
 
