@@ -1,6 +1,5 @@
 /**
 ***  BVH Player
-***  BVH動作ファイルの読み込み・描画クラス
 ***  Copyright (c) 2004-2017, Masaki OSHITA (www.oshita-lab.org)
 ***  Released under the MIT license http://opensource.org/licenses/mit-license.php
 **/
@@ -9,36 +8,31 @@
 #include <string.h>
 #include <math.h>
 #include <GL/glut.h>
-
 #include "BVH.h"
 
 
-
-
-// コントラクタ
 BVH::BVH()
 {
 	motion = NULL;
 	Clear();
 }
 
-// コントラクタ
+
 BVH::BVH( const char * bvh_file_name )
 {
 	motion = NULL;
 	Clear();
-
 	Load( bvh_file_name );
 }
 
-// デストラクタ
+
 BVH::~BVH()
 {
 	Clear();
 }
 
 
-// 全情報のクリア
+
 void  BVH::Clear()
 {
 	int channelSize = channels.size();
@@ -57,100 +51,121 @@ void  BVH::Clear()
 		delete  motion;
 
 
-	is_load_success = false;
+	isLoaded = false;
 	
 	file_name = "";
 	motion_name = "";
 	
-	num_channel = 0;
+	numChannels = 0;
 	channels.clear();
 	joints.clear();
 	joint_index.clear();
 	
-	num_frame = 0;
+	numFrames = 0;
 	interval = 0.0;
 	motion = NULL;
 }
 
 
 
-//
-//  BVHファイルのロード
-//
+
+/*
+	Summary:
+	Load a BVH file into the class for rendering.
+
+
+*/
 void  BVH::Load( const char * bvh_file_name )
 {
-	// ファイル読み込みのバッファサイズ
-	#define  BUFFER_LENGTH  1024*32
+	#define  BUFFER_LENGTH  1024*32					// 32K line buffer
 
-	ifstream  file;
-	char      line[ BUFFER_LENGTH ];
-	char *    token;
-	char      separater[] = " :,\t";
-	vector< Joint * >   joint_stack;
-	Joint *   joint = NULL;
-	Joint *   new_joint = NULL;
-	bool      is_site = false;
-	double    x, y ,z;
-	int       i, j;
+	ifstream			file;
+	char				line[ BUFFER_LENGTH ];
+	char*				token;
+	char				separator[] = " :,\t";
+	vector<Joint*>		joint_stack;
+	Joint*				joint = NULL;
+	Joint*				new_joint = NULL;
+	bool				is_site = false;
+	double				x, y ,z;
+	int					i, j;
 
-	// 初期化
+
 	Clear();
 
-	// ファイルの情報（ファイル名・動作名）の設定
-	file_name = bvh_file_name;
-	const char *  mn_first = bvh_file_name;
-	const char *  mn_last = bvh_file_name + strlen( bvh_file_name );
-	if ( strrchr( bvh_file_name, '\\' ) != NULL )
-		mn_first = strrchr( bvh_file_name, '\\' ) + 1;
-	else if ( strrchr( bvh_file_name, '/' ) != NULL )
-		mn_first = strrchr( bvh_file_name, '/' ) + 1;
-	if ( strrchr( bvh_file_name, '.' ) != NULL )
-		mn_last = strrchr( bvh_file_name, '.' );
-	if ( mn_last < mn_first )
-		mn_last = bvh_file_name + strlen( bvh_file_name );
+	file_name = bvh_file_name;											// save the filename
+	const char* mn_first = bvh_file_name;
+	const char* mn_last = bvh_file_name + strlen( bvh_file_name );
+
+	if (strrchr(bvh_file_name, '\\') != NULL)
+	{
+		mn_first = strrchr(bvh_file_name, '\\') + 1;
+	}
+	else if (strrchr(bvh_file_name, '/') != NULL)
+	{
+		mn_first = strrchr(bvh_file_name, '/') + 1;
+	}
+
+	if (strrchr(bvh_file_name, '.') != NULL)
+	{
+		mn_last = strrchr(bvh_file_name, '.');
+	}
+
+
+	if (mn_last < mn_first)
+	{
+		mn_last = bvh_file_name + strlen(bvh_file_name);
+	}
 	motion_name.assign( mn_first, mn_last );
 
-	// ファイルのオープン
+	// open the file to parse it ...
 	file.open( bvh_file_name, ios::in );
-	if ( file.is_open() == 0 )  return; // ファイルが開けなかったら終了
-
-	// 階層情報の読み込み
-	while ( ! file.eof() )
+	if (file.is_open() == 0)
 	{
-		// ファイルの最後まできてしまったら異常終了
+		// failed to load the file
+		return; 
+	}
+
+	// loop through the file until we reach the end of it.
+	while ( !file.eof() )
+	{
+
 		if ( file.eof() )  
 			goto bvh_error;
 
-		// １行読み込み、先頭の単語を取得
+		// read a line from the file
 		file.getline( line, BUFFER_LENGTH );
-		token = strtok( line, separater );
 
-		// 空行の場合は次の行へ
-		if ( token == NULL )  continue;
+		// separate out the tokens using the separators as conditions
+		token = strtok( line, separator );
 
-		// 関節ブロックの開始
+		// check if token is valid
+		if ( token == NULL )  
+			continue;
+
+		// is the token a collection of values
 		if ( strcmp( token, "{" ) == 0 )
 		{
-			// 現在の関節をスタックに積む
 			joint_stack.push_back( joint );
 			joint = new_joint;
 			continue;
 		}
-		// 関節ブロックの終了
+
+		// end of the joint
 		if ( strcmp( token, "}" ) == 0 )
 		{
-			// 現在の関節をスタックから取り出す
+			
 			joint = joint_stack.back();
 			joint_stack.pop_back();
 			is_site = false;
 			continue;
 		}
 
-		// 関節情報の開始
+		// roots or joint?
 		if ( ( strcmp( token, "ROOT" ) == 0 ) ||
 		     ( strcmp( token, "JOINT" ) == 0 ) )
 		{
-			// 関節データの作成
+			// create a new joint ...
 			new_joint = new Joint();
 			new_joint->index = joints.size();
 			new_joint->parent = joint;
@@ -158,12 +173,16 @@ void  BVH::Load( const char * bvh_file_name )
 			new_joint->offset[0] = 0.0;  new_joint->offset[1] = 0.0;  new_joint->offset[2] = 0.0;
 			new_joint->site[0] = 0.0;  new_joint->site[1] = 0.0;  new_joint->site[2] = 0.0;
 			joints.push_back( new_joint );
-			if ( joint )
-				joint->children.push_back( new_joint );
+
+			// check if there is a parent joint
+			if (joint)
+			{
+				joint->children.push_back(new_joint);
+			}
 
 			// 関節名の読み込み
 			token = strtok( NULL, "" );
-			while ( *token == ' ' )  token ++;
+			while ( *token == ' ' )  token++;
 			new_joint->name = token;
 
 			// インデックスへ追加
@@ -183,11 +202,11 @@ void  BVH::Load( const char * bvh_file_name )
 		if ( strcmp( token, "OFFSET" ) == 0 )
 		{
 			// 座標値を読み込み
-			token = strtok( NULL, separater );
+			token = strtok( NULL, separator );
 			x = token ? atof( token ) : 0.0;
-			token = strtok( NULL, separater );
+			token = strtok( NULL, separator );
 			y = token ? atof( token ) : 0.0;
-			token = strtok( NULL, separater );
+			token = strtok( NULL, separator );
 			z = token ? atof( token ) : 0.0;
 			
 			// 関節のオフセットに座標値を設定
@@ -208,26 +227,31 @@ void  BVH::Load( const char * bvh_file_name )
 			continue;
 		}
 
+
+
 		// 関節のチャンネル情報
 		if ( strcmp( token, "CHANNELS" ) == 0 )
 		{
-			// チャンネル数を読み込み
-			token = strtok( NULL, separater );
+			// resize the channels vector inside the joint to accomodate new channels
+			token = strtok( NULL, separator );						// get the number of channels
 			joint->channels.resize( token ? atoi( token ) : 0 );
 
-			// チャンネル情報を読み込み
-			for ( i=0; i < (int)joint->channels.size(); i++ )
+			// go through all of the channels and parse channel data
+			for ( i = 0; i < (int)joint->channels.size(); i++ )
 			{
-				// チャンネルの作成
-				Channel *  channel = new Channel();
+				// create a new channel
+				Channel* channel = new Channel();
+
 				channel->joint = joint;
 				channel->index = channels.size();
-				channels.push_back( channel );
-				joint->channels[ i ] = channel;
+				channels.push_back(channel);
 
-				// チャンネルの種類の判定
-				token = strtok( NULL, separater );
-				if ( strcmp( token, "Xrotation" ) == 0 )
+				joint->channels[i] = channel;
+
+				// parse the channel data types
+				token = strtok( NULL, separator );
+
+				if ( strcmp( token, "Xrotation") == 0 )
 					channel->type = X_ROTATION;
 				else if ( strcmp( token, "Yrotation" ) == 0 )
 					channel->type = Y_ROTATION;
@@ -242,54 +266,60 @@ void  BVH::Load( const char * bvh_file_name )
 			}
 		}
 
-		// Motionデータのセクションへ移る
+		// Appears we are done once we find MOTION keyword ...
 		if ( strcmp( token, "MOTION" ) == 0 )
 			break;
 	}
 
 
-	// モーション情報の読み込み
 	file.getline( line, BUFFER_LENGTH );
-	token = strtok( line, separater );
+	token = strtok( line, separator );
 	if ( strcmp( token, "Frames" ) != 0 )  
 		goto bvh_error;
-	token = strtok( NULL, separater );
+
+	// Number of Frames
+	token = strtok( NULL, separator );
 	if ( token == NULL )  
 		goto bvh_error;
-	num_frame = atoi( token );
+	numFrames = atoi( token );
+
 
 	file.getline( line, BUFFER_LENGTH );
 	token = strtok( line, ":" );
 	if ( strcmp( token, "Frame Time" ) != 0 )  
 		goto bvh_error;
-	token = strtok( NULL, separater );
+	token = strtok( NULL, separator );
 	if ( token == NULL )  
 		goto bvh_error;
 	interval = atof( token );
 
-	num_channel = channels.size();
-	motion = new double[ num_frame * num_channel ];
+	// save off the number of channels ...
+	numChannels = channels.size();
 
-	// モーションデータの読み込み
-	for ( i=0; i<num_frame; i++ )
+	// create a motion array to accomodate the number 
+	// of frames and the number of channels.
+	motion = new double[ numFrames * numChannels ];
+
+	// loop through all of the frames
+	for (i = 0; i < numFrames; i++)
 	{
 		file.getline( line, BUFFER_LENGTH );
-		token = strtok( line, separater );
-		for ( j=0; j<num_channel; j++ )
+		token = strtok( line, separator );
+		for (j = 0; j < numChannels; j++ )
 		{
 			if ( token == NULL )
 				goto bvh_error;
-			motion[ i*num_channel + j ] = atof( token );
-			token = strtok( NULL, separater );
+
+			motion[i * numChannels + j] = atof( token );
+			token = strtok( NULL, separator );
 		}
 	}
 
-	// ファイルのクローズ
+	// we are done
 	file.close();
 
-	// ロードの成功
-	is_load_success = true;
-
+	// flag that we successful
+	isLoaded = true;
 	return;
 
 bvh_error:
@@ -298,21 +328,38 @@ bvh_error:
 
 
 
-//
-//  BVH骨格・姿勢の描画関数
-//
 
 
 
-// 指定フレームの姿勢を描画
+/* ============================================================================
+	Summary:
+		Given the frame number, render the figure onto the screen
+
+	Paramaters:
+	[in] frame_no	:	frame number to display
+	[in] scale		:	scale to apply
+
+============================================================================ */
 void  BVH::RenderFigure( int frame_no, float scale )
 {
 	// BVH骨格・姿勢を指定して描画
-	RenderFigure( joints[ 0 ], motion + frame_no * num_channel, scale );
+	RenderFigure( joints[0], motion + frame_no * numChannels, scale );
 }
 
 
-// 指定されたBVH骨格・姿勢を描画（クラス関数）
+
+
+/* ============================================================================
+	Summary:
+	Given the frame number, render the figure onto the screen
+
+	Paramaters:
+	[in] joint*		:	pointer to a specific joint to render
+	[in] motion*	:	motion data to render
+	[in] scale		:	scale to apply
+
+
+============================================================================ */
 void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 {
 	glPushMatrix();
@@ -347,12 +394,18 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	{
 		RenderBone( 0.0f, 0.0f, 0.0f, joint->site[ 0 ] * scale, joint->site[ 1 ] * scale, joint->site[ 2 ] * scale );
 	}
+
+
+
 	// 関節座標系の原点から次の関節への接続位置へのリンクを描画
 	if ( joint->children.size() == 1 )
 	{
 		Joint *  child = joint->children[ 0 ];
 		RenderBone( 0.0f, 0.0f, 0.0f, child->offset[ 0 ] * scale, child->offset[ 1 ] * scale, child->offset[ 2 ] * scale );
 	}
+
+
+
 	// 全関節への接続位置への中心点から各関節への接続位置へ円柱を描画
 	if ( joint->children.size() > 1 )
 	{
@@ -381,6 +434,8 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 		}
 	}
 
+
+
 	// 子関節に対して再帰呼び出し
 	for ( i=0; i<(int)joint->children.size(); i++ )
 	{
@@ -391,76 +446,110 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 }
 
 
-// BVH骨格の１本のリンクを描画（クラス関数）
-void  BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 )
-{
-	// 与えられた２点を結ぶ円柱を描画
 
-	// 円柱の２端点の情報を原点・向き・長さの情報に変換
+/* ============================================================================
+	Summary:
+	Render the bone using a cyclinder.
+
+	Parameters
+	[in] x0 :	starting x-coodinate
+	[in] y0 :	starting y-coodinate
+	[in] z0 :	starting z-coodinate
+	[in] x1 :	starting x-coodinate
+	[in] y1 :	starting y-coodinate
+	[in] z1 :	starting z-coodinate
+
+
+============================================================================ */
+void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 )
+{
+	static GLUquadricObj*  quad_obj = NULL;
+
+
+	// calculate the directional vector of the bone
 	GLdouble  dir_x = x1 - x0;
 	GLdouble  dir_y = y1 - y0;
 	GLdouble  dir_z = z1 - z0;
 	GLdouble  bone_length = sqrt( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z );
 
-	// 描画パラメタの設定
-	static GLUquadricObj *  quad_obj = NULL;
-	if ( quad_obj == NULL )
+
+	if (quad_obj == NULL)
+	{
+		// create a new quadric primative
 		quad_obj = gluNewQuadric();
+	}
+
+
 	gluQuadricDrawStyle( quad_obj, GLU_FILL );
 	gluQuadricNormals( quad_obj, GLU_SMOOTH );
 
 	glPushMatrix();
 
-	// 平行移動を設定
+	// translate the position
 	glTranslated( x0, y0, z0 );
 
-	// 以下、円柱の回転を表す行列を計算
-
-	// ｚ軸を単位ベクトルに正規化
+	// normalize the directional vector
 	double  length;
-	length = sqrt( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z );
-	if ( length < 0.0001 ) { 
-		dir_x = 0.0; dir_y = 0.0; dir_z = 1.0;  length = 1.0;
+	
+	length = bone_length;
+	if ( length < 0.0001 ) 
+	{ 
+		dir_x = 0.0; 
+		dir_y = 0.0; 
+		dir_z = 1.0;  
+		length = 1.0;
 	}
-	dir_x /= length;  dir_y /= length;  dir_z /= length;
 
-	// 基準とするｙ軸の向きを設定
+	dir_x /= length;  
+	dir_y /= length;  
+	dir_z /= length;
+
+	// create a standard up vector
 	GLdouble  up_x, up_y, up_z;
 	up_x = 0.0;
 	up_y = 1.0;
 	up_z = 0.0;
 
-	// ｚ軸とｙ軸の外積からｘ軸の向きを計算
+	// use cross-product to create a side vector
 	double  side_x, side_y, side_z;
 	side_x = up_y * dir_z - up_z * dir_y;
 	side_y = up_z * dir_x - up_x * dir_z;
 	side_z = up_x * dir_y - up_y * dir_x;
 
-	// ｘ軸を単位ベクトルに正規化
+	// normalize the side vector
 	length = sqrt( side_x*side_x + side_y*side_y + side_z*side_z );
-	if ( length < 0.0001 ) {
-		side_x = 1.0; side_y = 0.0; side_z = 0.0;  length = 1.0;
+	
+	if ( length < 0.0001 ) 
+	{
+		side_x = 1.0; 
+		side_y = 0.0; 
+		side_z = 0.0;  
+		length = 1.0;
 	}
-	side_x /= length;  side_y /= length;  side_z /= length;
+	
+	side_x /= length;  
+	side_y /= length;  
+	side_z /= length;
 
-	// ｚ軸とｘ軸の外積からｙ軸の向きを計算
+
+	// use cross product to create up up vector
 	up_x = dir_y * side_z - dir_z * side_y;
 	up_y = dir_z * side_x - dir_x * side_z;
 	up_z = dir_x * side_y - dir_y * side_x;
 
-	// 回転行列を設定
+	// create openGL 4x4 rotation matrix
 	GLdouble  m[16] = { side_x, side_y, side_z, 0.0,
 	                    up_x,   up_y,   up_z,   0.0,
 	                    dir_x,  dir_y,  dir_z,  0.0,
 	                    0.0,    0.0,    0.0,    1.0 };
 	glMultMatrixd( m );
 
-	// 円柱の設定
-	GLdouble radius= 0.01; // 円柱の太さ
-	GLdouble slices = 8.0; // 円柱の放射状の細分数（デフォルト12）
-	GLdouble stack = 3.0;  // 円柱の輪切りの細分数（デフォルト１）
+	// create a cylinder to draw
+	GLdouble radius= 0.02; // radius of cylinder
+	GLdouble slices = 8.0; // number of slices, more means smoother
+	GLdouble stack = 2.0;  // number of vertical slices for the cyclinder (doesn't matter really)
 
-	// 円柱を描画
+	// Draw the cyclinder
 	gluCylinder( quad_obj, radius, radius, bone_length, slices, stack ); 
 
 	glPopMatrix();

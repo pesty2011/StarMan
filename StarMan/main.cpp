@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(1280, 1024);
-	glutCreateWindow("StarMan: Hit SPACEBAR to START");
+	glutCreateWindow("StarMan: Hit SPACEBAR to TOGGLE Camera control");
 	glDepthRange(0.1f, 1000.0f);
 
 	glutIgnoreKeyRepeat(1);
@@ -125,11 +125,14 @@ void Grid()
 
 
 void Display(void) {
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f); //clear the screen to black
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //clear the color buffer and the depth buffer
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);			
 	glLoadIdentity();
 
 	g_camera.Refresh();
+
+	float		light0_position[] = { 10.0, 10.0, 10.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
 
 	DrawGrid();
 
@@ -223,19 +226,16 @@ void Update(int value)
 	if (g_bvh.IsLoadSuccess())
 	{
 		float interval = g_bvh.GetInterval();
-		interval /= 2.0f;
+		interval *= 0.0f;
 
 		animationTime += dtime;
 		if (animationTime >= interval)
 		{
-			frameNum += 2;
+			frameNum += 1;
 			frameNum = frameNum % g_bvh.GetNumFrame();
 			animationTime = animationTime - interval;
 		}
 	}
-
-
-
 	glutTimerFunc(1, Update, 1);
 }
 
@@ -325,6 +325,7 @@ void Mouse(int button, int state, int x, int y)
 }
 
 
+
 void MouseMotion(int x, int y)
 {
 	// This variable is hack to stop glutWarpPointer from triggering an event callback to Mouse(...)
@@ -362,14 +363,11 @@ void DrawGrid()
 #if true
 	const double gs = 100;
 
-
-
-	glColor3d(0.0, 0.0, 0.0);		// create the grid
-	for (double i = -gs; i <= gs; i += (gs / 50))
+	glColor3d(0.1, 0.1, 0.1);		// create the grid
+	for (double i = -gs; i <= gs; i += 5)
 	{
 		if (i)
 		{
-
 			glBegin(GL_LINES);
 			glVertex3d(-gs, 0, i);
 			glVertex3d(+gs, 0, i);

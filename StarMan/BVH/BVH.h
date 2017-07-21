@@ -1,6 +1,5 @@
 /**
 ***  BVH Player
-***  BVH動作ファイルの読み込み・描画クラス
 ***  Copyright (c) 2004-2017, Masaki OSHITA (www.oshita-lab.org)
 ***  Released under the MIT license http://opensource.org/licenses/mit-license.php
 **/
@@ -17,136 +16,108 @@
 using namespace  std;
 
 
+static const char Xrotation[] = "Xrotation";
+static const char Yrotation[] = "Yrotation";
+static const char Zrotation[] = "Zrotation";
 
-//
-//  BVH形式のモーションデータ
-//
+static const char Xposition[] = "Xposition";
+static const char Yposition[] = "Yposition";
+static const char Zposition[] = "Zposition";
+
+
+
 class  BVH
 {
-  public:
-	/*  内部用構造体  */
-
-	// チャンネルの種類
+public:
 	enum  ChannelEnum
 	{
 		X_ROTATION, Y_ROTATION, Z_ROTATION,
 		X_POSITION, Y_POSITION, Z_POSITION
 	};
-	struct  Joint;
-
-	// チャンネル情報
-	struct  Channel
+	
+	struct  Joint;							// define this for Channel
+	
+	struct Channel
 	{
-		// 対応関節
 		Joint *              joint;
-		
-		// チャンネルの種類
 		ChannelEnum          type;
-
-		// チャンネル番号
 		int                  index;
 	};
 
-	// 関節情報
-	struct  Joint
+
+
+	struct Joint
 	{
-		// 関節名
-		string               name;
-		// 関節番号
-		int                  index;
-
-		// 関節階層（親関節）
-		Joint *              parent;
-		// 関節階層（子関節）
-		vector< Joint * >    children;
-
-		// 接続位置
-		double               offset[3];
-
-		// 末端位置情報を持つかどうかのフラグ
-		bool                 has_site;
-		// 末端位置
-		double               site[3];
-
-		// 回転軸
-		vector< Channel * >  channels;
+		string				name;
+		int					index;
+		Joint*				parent;
+		vector<Joint*>		children;
+		double				offset[3];
+		bool				has_site;
+		double				site[3];
+		vector<Channel*>	channels;
 	};
 
 
-  private:
-	// ロードが成功したかどうかのフラグ
-	bool                     is_load_success;
+private:
+	bool					isLoaded;
 
-	/*  ファイルの情報  */
-	string                   file_name;   // ファイル名
-	string                   motion_name; // 動作名
+	string					file_name;
+	string					motion_name;
 
-	/*  階層構造の情報  */
-	int                      num_channel; // チャンネル数
-	vector< Channel * >      channels;    // チャンネル情報 [チャンネル番号]
-	vector< Joint * >        joints;      // 関節情報 [パーツ番号]
-	map< string, Joint * >   joint_index; // 関節名から関節情報へのインデックス
+	int						numChannels;			// number of channels in capture data
+	vector<Channel*>		channels;				// array of all of the channel pointers
+	vector<Joint*>			joints;					// vector of joint pointers
+	map<string, Joint*>		joint_index;			// map lookup of all of the joints
 
-	/*  モーションデータの情報  */
-	int                      num_frame;   // フレーム数
-	double                   interval;    // フレーム間の時間間隔
-	double *                 motion;      // [フレーム番号][チャンネル番号]
+	int						numFrames;
+	double					interval;
+	double*					motion;
 
-
-  public:
-	// コンストラクタ・デストラクタ
+// Constructor, Deconstructor stuff
+public:
 	BVH();
 	BVH( const char * bvh_file_name );
 	~BVH();
 
-	// 全情報のクリア
-	void  Clear();
+	void			Clear();
+	void			Load( const char * bvh_file_name );
 
-	// BVHファイルのロード
-	void  Load( const char * bvh_file_name );
+public:
+	bool			IsLoadSuccess() const { return isLoaded; }
 
-  public:
-	/*  データアクセス関数  */
+	const string&   GetFileName() const { return file_name; }
+	const string&   GetMotionName() const { return motion_name; }
 
-	// ロードが成功したかどうかを取得
-	bool  IsLoadSuccess() const { return is_load_success; }
-
-	// ファイルの情報の取得
-	const string &  GetFileName() const { return file_name; }
-	const string &  GetMotionName() const { return motion_name; }
-
-	// 階層構造の情報の取得
-	const int       GetNumJoint() const { return  joints.size(); }
-	const Joint *   GetJoint( int no ) const { return  joints[no]; }
-	const int       GetNumChannel() const { return  channels.size(); }
-	const Channel * GetChannel( int no ) const { return  channels[no]; }
-
-	const Joint *   GetJoint( const string & j ) const  {
-		map< string, Joint * >::const_iterator  i = joint_index.find( j );
-		return  ( i != joint_index.end() ) ? (*i).second : NULL; }
-	const Joint *   GetJoint( const char * j ) const  {
-		map< string, Joint * >::const_iterator  i = joint_index.find( j );
-		return  ( i != joint_index.end() ) ? (*i).second : NULL; }
-
-	// モーションデータの情報の取得
-	int     GetNumFrame() const { return  num_frame; }
-	double  GetInterval() const { return  interval; }
-	double  GetMotion( int f, int c ) const { return  motion[ f*num_channel + c ]; }
-
-	// モーションデータの情報の変更
-	void  SetMotion( int f, int c, double v ) { motion[ f*num_channel + c ] = v; }
-
-  public:
-	/*  姿勢の描画関数  */
 	
-	// 指定フレームの姿勢を描画
-	void  RenderFigure( int frame_no, float scale = 1.0f );
+	const int       GetNumJoint() const { return  joints.size(); }
+	const Joint*    GetJoint( int no ) const { return  joints[no]; }
+	const int       GetNumChannel() const { return  channels.size(); }
+	const Channel*  GetChannel( int no ) const { return  channels[no]; }
 
-	// 指定されたBVH骨格・姿勢を描画（クラス関数）
-	static void  RenderFigure( const Joint * root, const double * data, float scale = 1.0f );
 
-	// BVH骨格の１本のリンクを描画（クラス関数）
-	static void  RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
+	const Joint*    GetJoint( const string& jointName ) const  {
+		map<string, Joint*>::const_iterator  i = joint_index.find(jointName);
+		return  ( i != joint_index.end() ) ? (*i).second : NULL; 
+	}
+
+
+	const Joint*   GetJoint(const char* jointName ) const  {
+		map<string, Joint*>::const_iterator  i = joint_index.find(jointName);
+		return  ( i != joint_index.end() ) ? (*i).second : NULL; 
+	}
+
+	
+	int				GetNumFrame() const { return  numFrames; }
+	double			GetInterval() const { return  interval; }
+	double			GetMotion( int f, int c ) const { return  motion[ f*numChannels + c ]; }
+	void			SetMotion( int f, int c, double v ) { motion[ f*numChannels + c ] = v; }
+
+	// Rendering methods for the BVH system
+public:
+	void			RenderFigure( int frame_no, float scale = 1.0f );
+	static void		RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
+	static void		RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
 };
 
 
