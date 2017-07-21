@@ -392,7 +392,7 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	// 関節座標系の原点から末端点へのリンクを描画
 	if ( joint->children.size() == 0 )
 	{
-		RenderBone( 0.0f, 0.0f, 0.0f, joint->site[ 0 ] * scale, joint->site[ 1 ] * scale, joint->site[ 2 ] * scale );
+		RenderBone( 0.0f, 0.0f, 0.0f, (float)joint->site[ 0 ] * scale, (float)joint->site[ 1 ] * scale, (float)joint->site[ 2 ] * scale );
 	}
 
 
@@ -401,7 +401,7 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	if ( joint->children.size() == 1 )
 	{
 		Joint *  child = joint->children[ 0 ];
-		RenderBone( 0.0f, 0.0f, 0.0f, child->offset[ 0 ] * scale, child->offset[ 1 ] * scale, child->offset[ 2 ] * scale );
+		RenderBone( 0.0f, 0.0f, 0.0f, (float)child->offset[ 0 ] * scale, (float)child->offset[ 1 ] * scale, (float)child->offset[ 2 ] * scale );
 	}
 
 
@@ -429,8 +429,12 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 		for ( i=0; i< (int)joint->children.size(); i++ )
 		{
 			Joint *  child = joint->children[ i ];
-			RenderBone(	center[ 0 ] * scale, center[ 1 ] * scale, center[ 2 ] * scale,
-				child->offset[ 0 ] * scale, child->offset[ 1 ] * scale, child->offset[ 2 ] * scale );
+			RenderBone(	center[ 0 ] * scale, 
+				center[ 1 ] * scale, 
+				center[ 2 ] * scale,
+				(float)child->offset[ 0 ] * scale, 
+				(float)child->offset[ 1 ] * scale, 
+				(float)child->offset[ 2 ] * scale );
 		}
 	}
 
@@ -545,9 +549,9 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 	glMultMatrixd( m );
 
 	// create a cylinder to draw
-	GLdouble radius= 0.02; // radius of cylinder
-	GLdouble slices = 8.0; // number of slices, more means smoother
-	GLdouble stack = 2.0;  // number of vertical slices for the cyclinder (doesn't matter really)
+	GLdouble	radius= 0.02;		// radius of cylinder
+	GLint		slices = 8;			// number of slices, more means smoother
+	GLint		stack = 2;			// number of vertical slices for the cyclinder (doesn't matter really)
 
 	// Draw the cyclinder
 	gluCylinder( quad_obj, radius, radius, bone_length, slices, stack ); 

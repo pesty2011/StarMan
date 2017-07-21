@@ -226,7 +226,6 @@ void Update(int value)
 	if (g_bvh.IsLoadSuccess())
 	{
 		float interval = g_bvh.GetInterval();
-		interval *= 0.0f;
 
 		animationTime += dtime;
 		if (animationTime >= interval)
@@ -298,6 +297,15 @@ void Timer(int value)
 
 void Idle()
 {
+	// calculate the timer for the system
+	g_timer.Tick();
+	float dtime = g_timer.DeltaTime();
+
+
+
+
+
+
 	Display();
 }
 

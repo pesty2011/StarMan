@@ -5,7 +5,7 @@ CBaseEntity::CBaseEntity()
 	mName = "";						// no name
 
 	mParent = NULL;					// No parent class at this point
-	mType = EN_Unknown;			// unknown type;
+	mType = EN_Unknown;				// unknown type;
 }
 
 
@@ -48,5 +48,11 @@ void CBaseEntity::InsertChild(CBaseEntity* child)
 
 
 void CBaseEntity::DeleteChild(CBaseEntity* child)
+{
+}
+
+
+
+void CBaseEntity::Update(float dTime)
 {
 }

@@ -36,5 +36,8 @@ public:
 
 	string					GetName();
 	void					SetName(string name);
+
+	virtual void			Update(float dTime);
+
 };
 
