@@ -12,6 +12,7 @@ public:
 
 	float TotalTime()const;  // in seconds
 	float DeltaTime()const; // in seconds
+	float CurrentTime()const; // in seconds
 
 	void Reset(); // Call before message loop.
 	void Start(); // Call when unpaused.

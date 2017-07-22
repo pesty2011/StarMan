@@ -22,18 +22,18 @@
     <Filter Include="BVH">
       <UniqueIdentifier>{1250ff04-3010-4413-816c-b9ef67d2423e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="StateMachine">
+      <UniqueIdentifier>{e42cc2b9-45f1-4350-8479-e22aa33a3779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="States">
+      <UniqueIdentifier>{f1c17298-0542-4013-b5fa-5a8d844fa073}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Anim">
+      <UniqueIdentifier>{8f3e6ba0-2c29-4952-bb13-9120305e8de3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\GameTimer.cpp">
@@ -45,20 +45,35 @@
     <ClCompile Include="BaseEntity.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Entities\EntityMgr.cpp">
+    <ClCompile Include="FSMSystem.cpp">
+      <Filter>StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="FSMState.cpp">
+      <Filter>StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="FSMTransition.cpp">
+      <Filter>StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimPlayer.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\EntityManager.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="3Dutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -71,7 +86,37 @@
     <ClInclude Include="BaseEntity.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Entities\EntityMgr.h">
+    <ClInclude Include="FSMSystem.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMState.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMTransition.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMStateID.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimPlayer.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityNames.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Entities\EntityManager.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>

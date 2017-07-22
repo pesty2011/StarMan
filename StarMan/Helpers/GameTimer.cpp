@@ -5,14 +5,21 @@
 #include <windows.h>
 #include "GameTimer.h"
 
-GameTimer::GameTimer()
-: mSecondsPerCount(0.0), mDeltaTime(-1.0), mBaseTime(0), 
-  mPausedTime(0), mPrevTime(0), mCurrTime(0), mStopped(false)
+GameTimer::GameTimer() :
+	mSecondsPerCount(0.0), 
+	mDeltaTime(-1.0), 
+	mBaseTime(0), 
+	mPausedTime(0), 
+	mPrevTime(0), 
+	mCurrTime(0), 
+	mStopped(false)
 {
 	__int64 countsPerSec;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
 	mSecondsPerCount = 1.0 / (double)countsPerSec;
 }
+
+
 
 // Returns the total time elapsed since Reset() was called, NOT counting any
 // time when the clock is stopped.
@@ -52,6 +59,16 @@ float GameTimer::DeltaTime()const
 {
 	return (float)mDeltaTime;
 }
+
+
+float GameTimer::CurrentTime()const
+{
+	__int64 currTime;
+	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
+	return (float)currTime;
+}
+
+
 
 void GameTimer::Reset()
 {

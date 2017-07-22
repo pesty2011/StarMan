@@ -1,16 +1,30 @@
-#include "EntityMgr.h"
+#include "EntityManager.h"
 
 
 
-EntityMgr::EntityMgr()
+EntityManager::EntityManager()
 {
 }
 
 
-EntityMgr::~EntityMgr()
+EntityManager::~EntityManager()
 {
+	Clear();
 }
 
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	this returns a instance of the entity manager.  this is a singleton
+	pattern so there is only one instance of the entity manager class.
+
+---------------------------------------------------------------------------- */
+EntityManager* EntityManager::Instance()
+{
+	static EntityManager instance;
+	return &instance;
+}
 
 
 
@@ -19,7 +33,7 @@ EntityMgr::~EntityMgr()
 	clear out all of the entities from the entity manager
 
 ---------------------------------------------------------------------------- */
-void EntityMgr::Clear()
+void EntityManager::Clear()
 {
 	// loop through all of the entities and delete them from the system
 	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
@@ -42,7 +56,7 @@ void EntityMgr::Clear()
 	[in] name : string containing name of the entity
 
 ---------------------------------------------------------------------------- */
-CBaseEntity* EntityMgr::FindEntity(const string& name)
+CBaseEntity* EntityManager::FindEntity(const string& name)
 {
 	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
@@ -66,7 +80,7 @@ CBaseEntity* EntityMgr::FindEntity(const string& name)
 	[in] entity : pointer to the entity to be removed
 
 ---------------------------------------------------------------------------- */
-bool EntityMgr::AddEntity(CBaseEntity* entity)
+bool EntityManager::AddEntity(CBaseEntity* entity)
 {
 	entities.push_back(entity);
 
@@ -83,7 +97,7 @@ bool EntityMgr::AddEntity(CBaseEntity* entity)
 	[in] entity : pointer to the entity to be removed
 
 ---------------------------------------------------------------------------- */
-void EntityMgr::DelEntity(CBaseEntity* entity)
+void EntityManager::DelEntity(CBaseEntity* entity)
 {
 	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
@@ -107,7 +121,7 @@ void EntityMgr::DelEntity(CBaseEntity* entity)
 	[in] name : string containing the name of the entity to remove
 
 ---------------------------------------------------------------------------- */
-void EntityMgr::DelEntity(const string& name)
+void EntityManager::DelEntity(const string& name)
 {
 	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{
@@ -131,7 +145,7 @@ void EntityMgr::DelEntity(const string& name)
 
 
 ---------------------------------------------------------------------------- */
-void EntityMgr::Update(float dTime)
+void EntityManager::Update(float dTime)
 {
 	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
 	{

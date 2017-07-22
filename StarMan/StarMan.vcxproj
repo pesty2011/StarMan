@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimPlayer.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="BVH\BVH.cpp">
@@ -134,18 +136,28 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_MBCS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Entities\EntityMgr.cpp" />
+    <ClCompile Include="Entities\EntityManager.cpp" />
+    <ClCompile Include="FSMState.cpp" />
+    <ClCompile Include="FSMSystem.cpp" />
+    <ClCompile Include="FSMTransition.cpp" />
     <ClCompile Include="Helpers\GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Skeleton.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimPlayer.h" />
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BaseEntity.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="BVH\BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="3Dutil.h" />
-    <ClInclude Include="Entities\EntityMgr.h" />
+    <ClInclude Include="Entities\EntityManager.h" />
+    <ClInclude Include="EntityNames.h" />
+    <ClInclude Include="FSMState.h" />
+    <ClInclude Include="FSMStateID.h" />
+    <ClInclude Include="FSMSystem.h" />
+    <ClInclude Include="FSMTransition.h" />
     <ClInclude Include="Helpers\GameTimer.h" />
     <ClInclude Include="Skeleton.h" />
   </ItemGroup>

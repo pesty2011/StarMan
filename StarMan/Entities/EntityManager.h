@@ -3,13 +3,18 @@
 #include <vector>
 #include "..\BaseEntity.h"
 
-class EntityMgr
+
+// short-cut to get the entity manager class
+#define EntityMgr		EntityManager::Instance()
+
+
+class EntityManager
 {
 	std::vector<CBaseEntity*> entities;
 
 public:
-	EntityMgr();
-	~EntityMgr();
+	EntityManager();
+	~EntityManager();
 
 	CBaseEntity* FindEntity(const string& name);
 	bool AddEntity(CBaseEntity* entity);
@@ -18,5 +23,8 @@ public:
 
 	void Update(float dTime);
 	void Clear();
+
+
+	static EntityManager* Instance();
 };
 

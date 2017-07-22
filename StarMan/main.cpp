@@ -7,14 +7,13 @@
 #include "Camera.h"
 #include "Helpers\GameTimer.h"
 #include "BVH\BVH.h"
-
-
+#include "Entities\EntityManager.h"
+#include "EntityNames.h"
+#include "AssetManager.h"
 
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
-
-
 
 
 using namespace std;
@@ -29,6 +28,11 @@ void Mouse(int button, int state, int x, int y);
 void Timer(int value);
 void Idle();
 void Update(int value);
+void UpdateAnimation();
+void PlayAnimation();
+void StopAnimation();
+
+
 
 void DrawGrid();
 void Grid();
@@ -39,8 +43,16 @@ BVH g_bvh;
 float animationTime = 0.0f;
 int frameNum = 0;
 
-Camera g_camera;
-GameTimer g_timer;
+
+
+/*
+	GLOBAL APPLICATION VARIABLES 
+
+*/
+Camera			g_camera;			// the main camera
+GameTimer		g_timer;			// global timer for the application
+
+
 
 bool g_key[256];
 bool g_shift_down = false;
@@ -59,10 +71,63 @@ const float g_rotation_speed = M_PI / (180.0f * 2.5f);
 
 
 
-int main(int argc, char **argv) 
+/* ----------------------------------------------------------------------------
+	Summary:
+	initialize the starman application by creating all of the entities
+	that will be involved in the actual demo.
+
+
+---------------------------------------------------------------------------- */
+void InitStarMan()
 {
 	LoadBVH();
+	CBaseEntity* entity;
 
+	entity = new CBaseEntity(StarMan_1);
+	EntityMgr->AddEntity(entity);
+
+
+	//### HARD CODE the motiondata for now ...
+	entity->m_pAnim->SetBVH("ChaCha001");			// setup the motion data
+
+
+	entity = new CBaseEntity(StarMan_2);
+	EntityMgr->AddEntity(entity);
+}
+
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	Initialize the starman application by creating all of the entities
+	that will be involved in the actual demo.
+
+
+---------------------------------------------------------------------------- */
+void UpdateStarMan()
+{
+	EntityMgr->Update(0.0f);
+}
+
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	Destroy starman and remove all of the elements of the 
+	application.
+
+---------------------------------------------------------------------------- */
+void DestroyStarMan()
+{
+}
+
+
+
+
+
+int main(int argc, char **argv) 
+{
+	InitStarMan();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
@@ -93,8 +158,12 @@ int main(int argc, char **argv)
 
 void LoadBVH()
 {
-	g_bvh.Load("C:\\Users\\Rob\\Desktop\\ChaCha001.bvh");
+	g_bvh.Load("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
 
+	AssetMgr->AddMotion(&g_bvh);
+
+
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate - 01 - forward kick - yokoyama.bvh");
 //	g_bvh.Load(".\\bvh\\ChaCha001.bvh");
 
 }
@@ -182,6 +251,16 @@ void Keyboard(unsigned char key, int x, int y)
 			glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 		}
 	}
+	else if (key == 'p')
+	{
+		PlayAnimation();
+
+	}
+	else if (key == '0')
+	{
+		StopAnimation();
+	}
+
 
 	if (glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
 		g_shift_down = true;
@@ -213,31 +292,106 @@ void Update(int value)
 	//	cout << "Camera: " << x << ", " << y << ", " << z << " Yaw: " << yaw << " Pitch: " << pitch << endl;
 
 
-	// calculate the timer for the system
-	g_timer.Tick();
-
+	g_timer.Tick();								// calculate the timer for the system
 	float dtime = g_timer.DeltaTime();
-	float ttime = g_timer.TotalTime();
+//	float ttime = g_timer.TotalTime();
 
 //	cout << "Total Time: " << ttime << " DeltaTime: " << dtime << endl;
+	UpdateAnimation();
 
 
+#if true
 	// animation timers
 	if (g_bvh.IsLoadSuccess())
 	{
 		float interval = g_bvh.GetInterval();
 
+
 		animationTime += dtime;
+
+		float animStep = animationTime;
+		int frameinc = 0;
+		while (animStep > 0)
+		{
+			animStep -= interval;
+			if (animStep > 0.0f)
+			{
+				frameinc++;
+			}
+		}
+
+		frameNum += frameinc;
+		frameNum = frameNum % g_bvh.GetNumFrame();
+		animationTime = 0;
+
+
+//		cout << "inc: " << frameinc << endl;
+#if false
 		if (animationTime >= interval)
 		{
 			frameNum += 1;
 			frameNum = frameNum % g_bvh.GetNumFrame();
-			animationTime = animationTime - interval;
+			animationTime = 0;
 		}
+#endif
 	}
+#endif
 	glutTimerFunc(1, Update, 1);
 }
 
+
+
+float FrameTime = 0.0f;			// time animation started
+float Rate = 30.0f;				// playback rate of 30 fps
+
+bool IsPlaying = false;
+int CurrFrame = 0;
+int PrevFrame = 0;
+bool bLooping = true;
+double TotalTime = 0.0f;
+
+void PlayAnimation()
+{
+	if (g_bvh.IsLoadSuccess())
+	{
+		IsPlaying = true;
+		FrameTime = g_timer.CurrentTime();
+		CurrFrame = 0;
+		PrevFrame = 0;
+
+		TotalTime = (double)g_bvh.GetNumFrame() * g_bvh.GetInterval();
+
+		cout << "NumFrames: " << g_bvh.GetNumFrame() << endl;
+		cout << "Interval: " << g_bvh.GetInterval() << endl;
+		cout << "TotalTime: " << TotalTime << endl;
+		cout << "===========================================" << endl;
+
+	}
+}
+
+
+
+void StopAnimation()
+{
+	IsPlaying = false;
+}
+
+
+
+void UpdateAnimation()
+{
+	if (IsPlaying == true)
+	{
+		float CurrTime = g_timer.CurrentTime();
+		float dTime = CurrTime - FrameTime;
+
+
+
+
+
+
+	}
+}
 
 
 
@@ -297,15 +451,7 @@ void Timer(int value)
 
 void Idle()
 {
-	// calculate the timer for the system
-	g_timer.Tick();
-	float dtime = g_timer.DeltaTime();
-
-
-
-
-
-
+	UpdateStarMan();
 	Display();
 }
 

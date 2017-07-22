@@ -1,0 +1,28 @@
+#pragma once
+
+
+// state id values for the different types of states
+enum
+{
+	UNKNOWN_STATE = 0,
+
+	READY_STATE,							// pose at frame 0
+	STILLFRAME_QUARTER_STATE,
+	STILLFRAME_HALF_STATE,
+	STILLFRAME_TWOTHIRD_STATE,
+	CHACHA_LOOP
+};
+
+
+
+
+// transition values for state machine
+enum
+{
+	TRANSITION_UNKNOWN = 0,
+	TRANSITION_QUEUE_MUSIC,
+	TRANSITION_PAUSE_QUARTER,
+	TRANSITION_PAUSE_HALF,
+	TRANSITION_PAUSE_TWOTHIRD,
+	TRANSITION_TOTAL
+};
