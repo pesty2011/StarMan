@@ -73,11 +73,21 @@ void CBaseEntity::DeleteChild(CBaseEntity* child)
 
 
 
+void CBaseEntity::Play(string animName)
+{
+	if (m_pAnim)
+	{
+		m_pAnim->Play(animName);
+	}
+}
+
 void CBaseEntity::Update(float dTime)
 {
 //	cout << "Updating: " << mName << endl;
 //	m_pFSM->Update(dTime);
-//	m_pAnim->Update(dTime);
+
+	if (m_pAnim)
+		m_pAnim->Update(dTime);
 }
 
 
@@ -86,7 +96,5 @@ void CBaseEntity::Update(float dTime)
 void CBaseEntity::Display()
 {
 	if (m_pAnim)
-	{
 		m_pAnim->Display();
-	}
 }

@@ -1,4 +1,3 @@
-
 #include <Windows.h>
 #include <GL\glew.h>
 #include <GL\freeglut.h>
@@ -28,9 +27,6 @@ void Mouse(int button, int state, int x, int y);
 void Timer(int value);
 void Idle();
 void Update(int value);
-void UpdateAnimation();
-void PlayAnimation();
-void StopAnimation();
 
 
 
@@ -39,9 +35,6 @@ void Grid();
 
 
 void LoadBVH();
-BVH g_bvh;
-float animationTime = 0.0f;
-int frameNum = 0;
 
 
 
@@ -86,27 +79,20 @@ void InitStarMan()
 	entity = new CBaseEntity(StarMan_1);
 	EntityMgr->AddEntity(entity);
 
-
-	//### HARD CODE the motiondata for now ...
-	entity->m_pAnim->SetBVH("ChaCha001");			// setup the motion data
-
-
-	entity = new CBaseEntity(StarMan_2);
-	EntityMgr->AddEntity(entity);
+//	entity = new CBaseEntity(StarMan_2);
+//	EntityMgr->AddEntity(entity);
 }
 
 
 
 /* ----------------------------------------------------------------------------
 	Summary:
-	Initialize the starman application by creating all of the entities
-	that will be involved in the actual demo.
-
+	Update all of the entities in the entity manager
 
 ---------------------------------------------------------------------------- */
-void UpdateStarMan()
+void UpdateStarMan(float dTime)
 {
-	EntityMgr->Update(0.0f);
+	EntityMgr->Update(dTime);
 }
 
 
@@ -158,15 +144,33 @@ int main(int argc, char **argv)
 
 void LoadBVH()
 {
-	g_bvh.Load("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
+	// load up the assets for the demo ...
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
 
-	AssetMgr->AddMotion(&g_bvh);
 
-
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate - 01 - forward kick - yokoyama.bvh");
-//	g_bvh.Load(".\\bvh\\ChaCha001.bvh");
-
+	// karate moves
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-01.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-02.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-03.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-04.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-05.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-06.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
 }
+
+
 
 
 void Grid()
@@ -209,11 +213,8 @@ void Display(void) {
 	glColor3f(0, 1.0f, 0.8f);
 	glutWireCube(1.0f);
 
-	if (g_bvh.IsLoadSuccess())
-	{
-		glColor3f(0.8, 0.8f, 1.0f);
-		g_bvh.RenderFigure(frameNum, 0.1f);
-	}
+	// display the entities on screen
+	EntityMgr->Display();
 
 	glutSwapBuffers(); //swap the buffers
 }
@@ -253,12 +254,16 @@ void Keyboard(unsigned char key, int x, int y)
 	}
 	else if (key == 'p')
 	{
-		PlayAnimation();
-
+		// trigger playing an animation ...
+		CBaseEntity* entity = EntityMgr->FindEntity(GetNameOfEntity(StarMan_1));
+		if (entity != NULL)
+		{
+			entity->Play("karate-02");
+		}
 	}
 	else if (key == '0')
 	{
-		StopAnimation();
+		//StopAnimation();
 	}
 
 
@@ -284,23 +289,23 @@ void KeyboardUp(unsigned char key, int x, int y)
 
 void Update(int value)
 {
+#if false
 	// Some camera timing stuff
 	float x, y, z;
 	g_camera.GetPos(x, y, z);
 	float yaw = g_camera.GetYaw();
 	float pitch = g_camera.GetPitch();
 	//	cout << "Camera: " << x << ", " << y << ", " << z << " Yaw: " << yaw << " Pitch: " << pitch << endl;
+#endif
 
 
+	
+
+#if false
 	g_timer.Tick();								// calculate the timer for the system
 	float dtime = g_timer.DeltaTime();
-//	float ttime = g_timer.TotalTime();
-
-//	cout << "Total Time: " << ttime << " DeltaTime: " << dtime << endl;
-	UpdateAnimation();
 
 
-#if true
 	// animation timers
 	if (g_bvh.IsLoadSuccess())
 	{
@@ -336,63 +341,16 @@ void Update(int value)
 #endif
 	}
 #endif
+
+	g_timer.Tick();									// Update timer
+	float dTime = g_timer.DeltaTime();				// calculate the delta timer
+													
+	UpdateStarMan(dTime);
+
+
+
 	glutTimerFunc(1, Update, 1);
 }
-
-
-
-float FrameTime = 0.0f;			// time animation started
-float Rate = 30.0f;				// playback rate of 30 fps
-
-bool IsPlaying = false;
-int CurrFrame = 0;
-int PrevFrame = 0;
-bool bLooping = true;
-double TotalTime = 0.0f;
-
-void PlayAnimation()
-{
-	if (g_bvh.IsLoadSuccess())
-	{
-		IsPlaying = true;
-		FrameTime = g_timer.CurrentTime();
-		CurrFrame = 0;
-		PrevFrame = 0;
-
-		TotalTime = (double)g_bvh.GetNumFrame() * g_bvh.GetInterval();
-
-		cout << "NumFrames: " << g_bvh.GetNumFrame() << endl;
-		cout << "Interval: " << g_bvh.GetInterval() << endl;
-		cout << "TotalTime: " << TotalTime << endl;
-		cout << "===========================================" << endl;
-
-	}
-}
-
-
-
-void StopAnimation()
-{
-	IsPlaying = false;
-}
-
-
-
-void UpdateAnimation()
-{
-	if (IsPlaying == true)
-	{
-		float CurrTime = g_timer.CurrentTime();
-		float dTime = CurrTime - FrameTime;
-
-
-
-
-
-
-	}
-}
-
 
 
 
@@ -422,28 +380,6 @@ void Timer(int value)
 			// Reset the scene ...
 			g_camera.Reset();
 		}
-		else if (g_key['l'])
-		{
-#if false
-			const int  file_name_len = 256;
-			char  file_name[file_name_len] = "";
-
-
-			OPENFILENAME	open_file;
-			memset(&open_file, 0, sizeof(OPENFILENAME));
-			open_file.lStructSize = sizeof(OPENFILENAME);
-			open_file.hwndOwner = NULL;
-			open_file.lpstrFilter = "BVH Motion Data (*.bvh)\0*.bvh\0All (*.*)\0*.*\0";
-			open_file.nFilterIndex = 1;
-			open_file.lpstrFile = file_name;
-			open_file.nMaxFile = file_name_len;
-			open_file.lpstrTitle = "Select a BVH file";
-			open_file.lpstrDefExt = "bvh";
-			open_file.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-			BOOL  ret = GetOpenFileName(&open_file);
-#endif
-
-		}
 	}
 
 	glutTimerFunc(1, Timer, 0);
@@ -451,7 +387,11 @@ void Timer(int value)
 
 void Idle()
 {
-	UpdateStarMan();
+//	g_timer.Tick();									// Update timer
+//	float dTime = g_timer.DeltaTime();				// calculate the delta timer
+
+	// update all of the entities
+//	UpdateStarMan(dTime);
 	Display();
 }
 

@@ -58,6 +58,8 @@ public:
 	string					GetName();
 	void					SetName(string name);
 
+
+	void					Play(string animName);
 	virtual void			Update(float dTime);
 	virtual void			Display();
 };

@@ -1,4 +1,6 @@
 #pragma once
+#include <GL\glew.h>
+#include <GL\freeglut.h>
 
 #include "BVH\BVH.h"
 
@@ -8,19 +10,22 @@ class CBaseEntity;
 class CAnimPlayer
 {
 protected:
-	float			mRate;
-	bool			bLoop;
-	bool			bIsPlaying;
-	bool			bIsLoaded;
+	float			mRate;				// playback rate
+	bool			bLoop;				// do we loop the playback
+	bool			bIsPlaying;			// is an animation playing
+	bool			bIsLoaded;			// is an animation loaded
 
-	int				mCurrFrame;
-	int				mPrevFrame;
+	int				mCurrFrame;			// current frame we are displaying
+	int				mPrevFrame;			// previous frame we displayed
+	int				mNumFrames;
 
-	float			mStartTime;
-	float			mCurrTime;
 
-	float			mInterval;
-	float			mTotalTime;
+	float			mStartTime;			// starting time of the animation
+	float			mCurrTime;			// current time
+	float			mFrameTime;			// current animation time
+
+	float			mInterval;			// intervals between keys
+	float			mTotalTime;			// total time of animation
 
 
 	BVH*			m_pMotionData;		// the motion data

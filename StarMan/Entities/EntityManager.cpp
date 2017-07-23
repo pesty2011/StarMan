@@ -153,3 +153,13 @@ void EntityManager::Update(float dTime)
 		entity->Update(dTime);
 	}
 }
+
+
+void EntityManager::Display()
+{
+	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	{
+		CBaseEntity* entity = *it;
+		entity->Display();
+	}
+}

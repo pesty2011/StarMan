@@ -22,6 +22,7 @@ public:
 	void DelEntity(const string& name);
 
 	void Update(float dTime);
+	void Display();
 	void Clear();
 
 

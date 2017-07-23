@@ -23,8 +23,9 @@ CAnimPlayer::CAnimPlayer(CBaseEntity* owner)
 	m_pMotionData = NULL;
 
 	m_pOwner = owner;
-
 }
+
+
 
 CAnimPlayer::CAnimPlayer()
 {
@@ -57,11 +58,17 @@ CAnimPlayer::~CAnimPlayer()
 void CAnimPlayer::Play()
 {
 	cout << "===========================================" << endl;
-	cout << "PLAY" << endl;
+	cout << "PLAY: " << m_pMotionData->GetMotionName() << endl;
 	cout << "NumFrames: " << m_pMotionData->GetNumFrame() << endl;
 	cout << "Interval: " << mInterval << endl;
 	cout << "TotalTime: " << mTotalTime << endl;
 	cout << "===========================================" << endl;
+
+	mFrameTime = 0.0f;
+	mCurrFrame = 0;
+	mPrevFrame = 0;
+
+	bIsPlaying = true;
 }
 
 
@@ -76,6 +83,8 @@ void CAnimPlayer::Play(BVH* data, bool loop)
 {
 	SetBVH(data);
 	SetLoop(loop);
+
+	Play();
 }
 
 
@@ -86,6 +95,7 @@ void CAnimPlayer::Play(string animName)
 	if (motion != NULL)
 	{
 		SetBVH(motion);
+		Play();
 	}
 	else
 	{
@@ -101,6 +111,7 @@ void CAnimPlayer::Stop()
 	cout << "===========================================" << endl;
 	cout << "STOP" << endl;
 	cout << "===========================================" << endl;
+	bIsPlaying = false;
 }
 
 
@@ -110,6 +121,7 @@ void CAnimPlayer::Pause()
 	cout << "===========================================" << endl;
 	cout << "PAUSE" << endl;
 	cout << "===========================================" << endl;
+	bIsPlaying = false;
 }
 
 
@@ -122,8 +134,8 @@ void CAnimPlayer::SetBVH(BVH* data)
 		bLoop = false;
 
 		mInterval = (float)data->GetInterval();
-		mTotalTime = (float)data->GetNumFrame() * mInterval;
-
+		mNumFrames = data->GetNumFrame();
+		mTotalTime = (float)mNumFrames * mInterval;
 		mCurrFrame = 0;
 		mPrevFrame = 0;
 	}
@@ -151,9 +163,10 @@ void CAnimPlayer::Update(float dTime)
 {
 	if (bIsPlaying)
 	{
-		mCurrTime += dTime;
+#if false
+		mFrameTime += dTime;
 
-		float animStep = mCurrTime;
+		float animStep = mFrameTime;
 		int frameinc = 0;
 		while (animStep > 0)
 		{
@@ -166,7 +179,32 @@ void CAnimPlayer::Update(float dTime)
 
 		mCurrFrame += frameinc;
 		mCurrFrame = mCurrFrame % m_pMotionData->GetNumFrame();
-		mCurrFrame = 0;
+		mFrameTime = 0;
+#else
+		mFrameTime += dTime;
+		float time = mFrameTime / mTotalTime;
+		float frame = (float)m_pMotionData->GetNumFrame() * time;
+		mPrevFrame = mCurrFrame;
+		mCurrFrame = (int)frame;
+
+
+		if (bLoop)
+		{
+			mCurrFrame = mCurrFrame % m_pMotionData->GetNumFrame();
+		}
+		else if (mFrameTime >= mTotalTime)
+		{
+			mCurrFrame = m_pMotionData->GetNumFrame() - 1;
+			
+			// send a message that we are done doing this move ...
+		}
+
+
+		// calculate the percentage moves here if we need to blend going 
+		// into another move or not ...
+
+
+#endif
 	}
 }
 
@@ -176,9 +214,10 @@ void CAnimPlayer::Update(float dTime)
 
 void CAnimPlayer::Display()
 {
-	if (bIsPlaying)
+	if (m_pMotionData)
 	{
-		m_pMotionData->RenderFigure(0, 0.1f);
+		glColor3f(1.0, 1.0f, 1.0f);
+		m_pMotionData->RenderFigure(mCurrFrame, 0.05f);
 	}
 }
 
