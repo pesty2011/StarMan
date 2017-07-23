@@ -364,20 +364,22 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 {
 	glPushMatrix();
 
-	// ルート関節の場合は平行移動を適用
 	if ( joint->parent == NULL )
 	{
+
+		// This translates the root ...
+//		glTranslatef(0, 5.0f, 0);
 		glTranslatef( (float)data[ 0 ] * scale, (float)data[ 1 ] * scale, (float)data[ 2 ] * scale );
+
 	}
-	// 子関節の場合は親関節からの平行移動を適用
 	else
 	{
 		glTranslatef((float)joint->offset[ 0 ] * scale, (float)joint->offset[ 1 ] * scale, (float)joint->offset[ 2 ] * scale );
 	}
 
-	// 親関節からの回転を適用（ルート関節の場合はワールド座標からの回転）
-	int  i;
-	for ( i=0; i< (int)joint->channels.size(); i++ )
+
+	size_t  i;
+	for ( i = 0; i < joint->channels.size(); i++ )
 	{
 		Channel *  channel = joint->channels[ i ];
 		if ( channel->type == X_ROTATION )
@@ -441,7 +443,7 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 
 
 	// 子関節に対して再帰呼び出し
-	for ( i=0; i<(int)joint->children.size(); i++ )
+	for ( i = 0; i < joint->children.size(); i++ )
 	{
 		RenderFigure( joint->children[ i ], data, scale );
 	}

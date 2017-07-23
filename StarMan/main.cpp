@@ -297,60 +297,11 @@ void Update(int value)
 	float pitch = g_camera.GetPitch();
 	//	cout << "Camera: " << x << ", " << y << ", " << z << " Yaw: " << yaw << " Pitch: " << pitch << endl;
 #endif
-
-
-	
-
-#if false
-	g_timer.Tick();								// calculate the timer for the system
-	float dtime = g_timer.DeltaTime();
-
-
-	// animation timers
-	if (g_bvh.IsLoadSuccess())
-	{
-		float interval = g_bvh.GetInterval();
-
-
-		animationTime += dtime;
-
-		float animStep = animationTime;
-		int frameinc = 0;
-		while (animStep > 0)
-		{
-			animStep -= interval;
-			if (animStep > 0.0f)
-			{
-				frameinc++;
-			}
-		}
-
-		frameNum += frameinc;
-		frameNum = frameNum % g_bvh.GetNumFrame();
-		animationTime = 0;
-
-
-//		cout << "inc: " << frameinc << endl;
-#if false
-		if (animationTime >= interval)
-		{
-			frameNum += 1;
-			frameNum = frameNum % g_bvh.GetNumFrame();
-			animationTime = 0;
-		}
-#endif
-	}
-#endif
-
-	g_timer.Tick();									// Update timer
-	float dTime = g_timer.DeltaTime();				// calculate the delta timer
-													
-	UpdateStarMan(dTime);
-
-
-
 	glutTimerFunc(1, Update, 1);
 }
+
+
+
 
 
 
@@ -387,11 +338,10 @@ void Timer(int value)
 
 void Idle()
 {
-//	g_timer.Tick();									// Update timer
-//	float dTime = g_timer.DeltaTime();				// calculate the delta timer
-
 	// update all of the entities
-//	UpdateStarMan(dTime);
+	g_timer.Tick();									// Update timer
+	float dTime = g_timer.DeltaTime();				// calculate the delta timer
+	UpdateStarMan(dTime);
 	Display();
 }
 
