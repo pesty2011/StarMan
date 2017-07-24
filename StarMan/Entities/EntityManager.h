@@ -17,6 +17,7 @@ public:
 	~EntityManager();
 
 	CBaseEntity* FindEntity(const string& name);
+	CBaseEntity* FindEntity(int id);
 	bool AddEntity(CBaseEntity* entity);
 	void DelEntity(CBaseEntity* entity);
 	void DelEntity(const string& name);

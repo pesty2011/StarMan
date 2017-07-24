@@ -1,7 +1,10 @@
 #include <iostream>
 
+#include "BaseEntity.h"
 #include "AnimPlayer.h"
 #include "AssetManager.h"
+#include "EntityMessage.h"
+#include "MessageDispatch.h"
 
 
 CAnimPlayer::CAnimPlayer(CBaseEntity* owner)
@@ -197,6 +200,8 @@ void CAnimPlayer::Update(float dTime)
 			mCurrFrame = m_pMotionData->GetNumFrame() - 1;
 			
 			// send a message that we are done doing this move ...
+			Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, m_pOwner->GetID(), m_pOwner->GetID(), CREATE_MESSAGE(MSGTYPE_PLAYBACK, MSGEVENT_ANIMPLAYBACK_DONE) , 0, NULL);
+
 		}
 
 

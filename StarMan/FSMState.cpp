@@ -57,16 +57,21 @@ int FSMState::GetTransitionStateID(int transition)
 
 void FSMState::Enter()
 {
+	cout << "FSMState: Enter" << endl;
 }
 
 
 
 void FSMState::Execute(float dTime)
 {
+	cout << "FSMState: Execute" << endl;
+
 }
 
 
 
 void FSMState::Exit()
 {
+	cout << "FSMState: Exit" << endl;
+
 }

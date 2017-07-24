@@ -5,7 +5,8 @@
 #include "EntityNames.h"
 #include "FSMSystem.h"
 
-
+#include "States\Karate01State.h"
+#include "KarateStates.h"
 
 CBaseEntity::CBaseEntity(int id)
 {
@@ -15,8 +16,10 @@ CBaseEntity::CBaseEntity(int id)
 	mParent = NULL;					// No parent class at this point
 	mType = EN_Unknown;				// unknown type;
 
-	m_pAnim = new CAnimPlayer();
+	m_pAnim = new CAnimPlayer(this);
 	m_pFSM = new FSMSystem(this);
+
+	Init();
 }
 
 CBaseEntity::CBaseEntity()
@@ -72,6 +75,28 @@ void CBaseEntity::DeleteChild(CBaseEntity* child)
 }
 
 
+/*
+	Summary:
+	Lets hard code a FSM controller for the animation system
+
+
+*/
+void CBaseEntity::Init()
+{
+	FSMState*	state;
+
+	state = new CKarate01State(this);
+	state->SetID(STATEID_KARATE_01);
+	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_02);
+	m_pFSM->AddState(state);
+
+	state = new CKarate02State(this);
+	state->SetID(STATEID_KARATE_02);
+	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_01);
+	m_pFSM->AddState(state);
+
+
+}
 
 void CBaseEntity::Play(string animName)
 {
@@ -84,7 +109,7 @@ void CBaseEntity::Play(string animName)
 void CBaseEntity::Update(float dTime)
 {
 //	cout << "Updating: " << mName << endl;
-//	m_pFSM->Update(dTime);
+	m_pFSM->Update(dTime);
 
 	if (m_pAnim)
 		m_pAnim->Update(dTime);
@@ -97,4 +122,38 @@ void CBaseEntity::Display()
 {
 	if (m_pAnim)
 		m_pAnim->Display();
+}
+
+
+
+bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
+{
+	cout << "Recieved a message" << endl;
+
+	int type = MSG_MASK_TYPE(msg.Msg);
+	int evt = MSG_MASK_EVENT(msg.Msg);
+
+
+	switch (type)
+	{
+	case MSGTYPE_EVENT:
+		cout << "Recieved a MSGTYPE_EVENT: " << evt << endl;
+		break;
+
+	case MSGTYPE_TRANSITION:
+		cout << "Recieved a MSGTYPE_TRANSITION: " << evt << endl;
+		break;
+
+	case MSGTYPE_PLAYBACK:
+		cout << "Recieved a MSGTYPE_PLAYBACK: " << evt << endl;
+
+		if (evt == MSGEVENT_ANIMPLAYBACK_PLAY)
+		{
+			string anim = *(string*)msg.Data;
+			Play(anim);
+		}
+		break;
+	}
+
+	return true;
 }

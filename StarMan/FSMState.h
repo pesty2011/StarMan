@@ -4,7 +4,8 @@
 #include "BaseEntity.h"
 
 
-/*
+
+/* ----------------------------------------------------------------------------
 	Summary:
 	State Design Pattern
 
@@ -16,11 +17,13 @@
 	contained within each State class.  All state classes are derived
 	from an abstract base class, thereby defining a common interface.
 
+
 	It is favourable for each states to have associated enter and exit
 	actions.  This permits the programmer to write logic that is only
 	executed once at state entry and exit and increases the flexibility
 	of an FSM a great deal.
-*/
+
+---------------------------------------------------------------------------- */
 class FSMState
 {
 protected:
@@ -36,6 +39,7 @@ public:
 	~FSMState();
 
 	int GetID() { return mStateID; }
+	void SetID(int id) { mStateID = id; }
 
 	void AddTransition(int trans, int stateID);
 	void DelTransition(int trans, int stateID);
@@ -44,7 +48,7 @@ public:
 	virtual void Enter();
 	virtual void Execute(float dTime);
 	virtual void Exit();
-
-
 };
+
+
 

@@ -342,7 +342,6 @@ bvh_error:
 ============================================================================ */
 void  BVH::RenderFigure( int frame_no, float scale )
 {
-	// BVH骨格・姿勢を指定して描画
 	RenderFigure( joints[0], motion + frame_no * numChannels, scale );
 }
 
@@ -364,6 +363,8 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 {
 	glPushMatrix();
 
+
+	// check if this is the root joint of the skeleton
 	if ( joint->parent == NULL )
 	{
 
@@ -381,7 +382,8 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	size_t  i;
 	for ( i = 0; i < joint->channels.size(); i++ )
 	{
-		Channel *  channel = joint->channels[ i ];
+		Channel* channel = joint->channels[ i ];
+
 		if ( channel->type == X_ROTATION )
 			glRotatef((float)data[ channel->index ], 1.0f, 0.0f, 0.0f );
 		else if ( channel->type == Y_ROTATION )
@@ -390,8 +392,8 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 			glRotatef((float)data[ channel->index ], 0.0f, 0.0f, 1.0f );
 	}
 
-	// リンクを描画
-	// 関節座標系の原点から末端点へのリンクを描画
+
+
 	if ( joint->children.size() == 0 )
 	{
 		RenderBone( 0.0f, 0.0f, 0.0f, (float)joint->site[ 0 ] * scale, (float)joint->site[ 1 ] * scale, (float)joint->site[ 2 ] * scale );
@@ -399,38 +401,38 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 
 
 
-	// 関節座標系の原点から次の関節への接続位置へのリンクを描画
 	if ( joint->children.size() == 1 )
 	{
-		Joint *  child = joint->children[ 0 ];
+		Joint* child = joint->children[0];
 		RenderBone( 0.0f, 0.0f, 0.0f, (float)child->offset[ 0 ] * scale, (float)child->offset[ 1 ] * scale, (float)child->offset[ 2 ] * scale );
 	}
 
 
 
-	// 全関節への接続位置への中心点から各関節への接続位置へ円柱を描画
 	if ( joint->children.size() > 1 )
 	{
-		// 原点と全関節への接続位置への中心点を計算
 		float  center[ 3 ] = { 0.0f, 0.0f, 0.0f };
-		for ( i=0; i< (int)joint->children.size(); i++ )
+
+		for ( i = 0; i < joint->children.size(); i++ )
 		{
-			Joint *  child = joint->children[ i ];
+			Joint* child = joint->children[ i ];
+
 			center[ 0 ] += (float)child->offset[ 0 ];
 			center[ 1 ] += (float)child->offset[ 1 ];
 			center[ 2 ] += (float)child->offset[ 2 ];
 		}
+
 		center[ 0 ] /= joint->children.size() + 1;
 		center[ 1 ] /= joint->children.size() + 1;
 		center[ 2 ] /= joint->children.size() + 1;
 
-		// 原点から中心点へのリンクを描画
 		RenderBone(	0.0f, 0.0f, 0.0f, center[ 0 ] * scale, center[ 1 ] * scale, center[ 2 ] * scale );
 
-		// 中心点から次の関節への接続位置へのリンクを描画
-		for ( i=0; i< (int)joint->children.size(); i++ )
+
+
+		for ( i = 0; i < joint->children.size(); i++ )
 		{
-			Joint *  child = joint->children[ i ];
+			Joint* child = joint->children[ i ];
 			RenderBone(	center[ 0 ] * scale, 
 				center[ 1 ] * scale, 
 				center[ 2 ] * scale,
@@ -440,9 +442,6 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 		}
 	}
 
-
-
-	// 子関節に対して再帰呼び出し
 	for ( i = 0; i < joint->children.size(); i++ )
 	{
 		RenderFigure( joint->children[ i ], data, scale );
@@ -450,6 +449,7 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 
 	glPopMatrix();
 }
+
 
 
 
@@ -461,9 +461,9 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	[in] x0 :	starting x-coodinate
 	[in] y0 :	starting y-coodinate
 	[in] z0 :	starting z-coodinate
-	[in] x1 :	starting x-coodinate
-	[in] y1 :	starting y-coodinate
-	[in] z1 :	starting z-coodinate
+	[in] x1 :	ending x-coodinate
+	[in] y1 :	ending y-coodinate
+	[in] z1 :	ending z-coodinate
 
 
 ============================================================================ */
@@ -560,3 +560,5 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 
 	glPopMatrix();
 }
+
+

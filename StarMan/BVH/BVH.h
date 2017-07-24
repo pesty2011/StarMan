@@ -39,7 +39,7 @@ public:
 	
 	struct Channel
 	{
-		Joint *              joint;
+		Joint*               joint;
 		ChannelEnum          type;
 		int                  index;
 	};

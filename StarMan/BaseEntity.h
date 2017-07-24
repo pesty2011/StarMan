@@ -4,7 +4,7 @@ using namespace std;
 #include <string>
 
 #include "AnimPlayer.h"
-
+#include "EntityMessage.h"
 
 //class CAnimPlayer;
 class FSMSystem;
@@ -57,10 +57,13 @@ public:
 
 	string					GetName();
 	void					SetName(string name);
+	int						GetID() { return mID; }
 
-
+	void					Init();
 	void					Play(string animName);
 	virtual void			Update(float dTime);
 	virtual void			Display();
+
+	virtual bool			OnHandleMessage(const EntityMessage& msg);
 };
 

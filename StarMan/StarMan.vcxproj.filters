@@ -72,6 +72,21 @@
     <ClCompile Include="Entities\EntityManager.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Anim.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate01State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageDispatch.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate02State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3Dutil.h">
@@ -118,6 +133,27 @@
     </ClInclude>
     <ClInclude Include="Entities\EntityManager.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Anim.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate01State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageDispatch.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="KarateStates.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate02State.h">
+      <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

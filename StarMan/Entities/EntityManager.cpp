@@ -55,6 +55,9 @@ void EntityManager::Clear()
 	Parameters:
 	[in] name : string containing name of the entity
 
+	Output:
+	[ret] pointer to BaseEntity, otherwise NULL.
+
 ---------------------------------------------------------------------------- */
 CBaseEntity* EntityManager::FindEntity(const string& name)
 {
@@ -70,6 +73,34 @@ CBaseEntity* EntityManager::FindEntity(const string& name)
 	return NULL;
 }
 
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	Search the entity list and return the pointer to the entity back
+	to the caller.
+
+	Parameters:
+	[in] id : unique id associated with the entity
+
+
+	Output:
+	[ret] pointer to BaseEntity, otherwise NULL.
+
+---------------------------------------------------------------------------- */
+CBaseEntity* EntityManager::FindEntity(int id)
+{
+	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	{
+		CBaseEntity* entity = *it;
+
+		if (entity->GetID() == id)
+		{
+			return entity;
+		}
+	}
+	return NULL;
+}
 
 
 /* ----------------------------------------------------------------------------
