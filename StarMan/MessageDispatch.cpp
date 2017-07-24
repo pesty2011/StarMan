@@ -76,9 +76,9 @@ void CMessageDispatch::DispatchEntityMessage(float  delay,
 	//if there is no delay, route telegram immediately                       
 	if (delay <= 0.0f)
 	{
-		cout << "\nInstant telegram dispatched at time: " << CurrentTime
+		cout << "Message dispatched at time: " << CurrentTime
 			<< " by " << pSender->GetName() << " for " << pReceiver->GetName()
-			<< ". Msg is " << msg;
+			<< "  Msg is " << msg << endl;
 
 		//send the telegram to the recipient
 		Discharge(pReceiver, telegram);

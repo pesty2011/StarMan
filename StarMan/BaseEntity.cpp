@@ -128,8 +128,6 @@ void CBaseEntity::Display()
 
 bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 {
-	cout << "Recieved a message" << endl;
-
 	int type = MSG_MASK_TYPE(msg.Msg);
 	int evt = MSG_MASK_EVENT(msg.Msg);
 
@@ -137,15 +135,15 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 	switch (type)
 	{
 	case MSGTYPE_EVENT:
-		cout << "Recieved a MSGTYPE_EVENT: " << evt << endl;
+		cout << "MSGTYPE_EVENT received: " << evt << endl;
 		break;
 
 	case MSGTYPE_TRANSITION:
-		cout << "Recieved a MSGTYPE_TRANSITION: " << evt << endl;
+		cout << "MSGTYPE_TRANSITION received: " << evt << endl;
 		break;
 
 	case MSGTYPE_PLAYBACK:
-		cout << "Recieved a MSGTYPE_PLAYBACK: " << evt << endl;
+		cout << "MSGTYPE_PLAYBACK received: " << evt << endl;
 
 		if (evt == MSGEVENT_ANIMPLAYBACK_PLAY)
 		{

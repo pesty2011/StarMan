@@ -64,8 +64,7 @@ void FSMState::Enter()
 
 void FSMState::Execute(float dTime)
 {
-	cout << "FSMState: Execute" << endl;
-
+//	cout << "FSMState: Execute" << endl;
 }
 
 

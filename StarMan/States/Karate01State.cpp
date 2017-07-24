@@ -28,7 +28,7 @@ void CKarate01State::Enter()
 
 void CKarate01State::Execute(float dTime) 
 {
-	cout << "CKarate01State: Execute" << endl;
+//	cout << "CKarate01State: Execute" << endl;
 	FSMState::Execute(dTime);
 }
 
