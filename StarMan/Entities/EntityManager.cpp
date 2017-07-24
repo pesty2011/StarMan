@@ -1,4 +1,7 @@
+#include <assert.h>
+
 #include "EntityManager.h"
+
 
 
 
@@ -16,7 +19,7 @@ EntityManager::~EntityManager()
 
 /* ----------------------------------------------------------------------------
 	Summary:
-	this returns a instance of the entity manager.  this is a singleton
+	This returns a instance of the entity manager.  this is a singleton
 	pattern so there is only one instance of the entity manager class.
 
 ---------------------------------------------------------------------------- */
@@ -35,13 +38,7 @@ EntityManager* EntityManager::Instance()
 ---------------------------------------------------------------------------- */
 void EntityManager::Clear()
 {
-	// loop through all of the entities and delete them from the system
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		CBaseEntity* entity = *it;
-		delete entity;
-	}
-	entities.clear();
+	m_EntityMap.clear();
 }
 
 
@@ -61,13 +58,14 @@ void EntityManager::Clear()
 ---------------------------------------------------------------------------- */
 CBaseEntity* EntityManager::FindEntity(const string& name)
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		CBaseEntity* entity = *it;
+	EntityMap::iterator it;
 
-		if (entity->GetName() == name)
+	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
+	{
+		string n = it->second->GetName();
+		if (name == n)
 		{
-			return entity;
+			return it->second;
 		}
 	}
 	return NULL;
@@ -90,14 +88,11 @@ CBaseEntity* EntityManager::FindEntity(const string& name)
 ---------------------------------------------------------------------------- */
 CBaseEntity* EntityManager::FindEntity(int id)
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	EntityMap::const_iterator it = m_EntityMap.find(id);
+	
+	if (it != m_EntityMap.end())
 	{
-		CBaseEntity* entity = *it;
-
-		if (entity->GetID() == id)
-		{
-			return entity;
-		}
+		return it->second;
 	}
 	return NULL;
 }
@@ -113,7 +108,7 @@ CBaseEntity* EntityManager::FindEntity(int id)
 ---------------------------------------------------------------------------- */
 bool EntityManager::AddEntity(CBaseEntity* entity)
 {
-	entities.push_back(entity);
+	m_EntityMap.insert(std::make_pair(entity->GetID(), entity));
 
 	return true;
 }
@@ -130,15 +125,7 @@ bool EntityManager::AddEntity(CBaseEntity* entity)
 ---------------------------------------------------------------------------- */
 void EntityManager::DelEntity(CBaseEntity* entity)
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		CBaseEntity* en = *it;
-
-		if (en == entity)
-		{
-			entities.erase(it);
-		}
-	}
+	m_EntityMap.erase(m_EntityMap.find(entity->GetID()));
 }
 
 
@@ -154,13 +141,15 @@ void EntityManager::DelEntity(CBaseEntity* entity)
 ---------------------------------------------------------------------------- */
 void EntityManager::DelEntity(const string& name)
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
-	{
-		CBaseEntity* entity = *it;
+	EntityMap::iterator it;
 
-		if (entity->GetName() == name)
+	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
+	{
+		string n = it->second->GetName();
+		if (name == n)
 		{
-			entities.erase(it);
+			DelEntity(it->second);
+			return;
 		}
 	}
 }
@@ -169,7 +158,7 @@ void EntityManager::DelEntity(const string& name)
 
 /* ----------------------------------------------------------------------------
 	Summary:
-	update feature for the entity
+	Updates all of the entities inside the entity manager
 
 	Parameters:
 	[in] dTime : delta time since last frame in milliseconds
@@ -178,19 +167,27 @@ void EntityManager::DelEntity(const string& name)
 ---------------------------------------------------------------------------- */
 void EntityManager::Update(float dTime)
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	EntityMap::iterator it;
+	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
 	{
-		CBaseEntity* entity = *it;
-		entity->Update(dTime);
+		it->second->Update(dTime);
 	}
 }
 
 
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	Displays all of the entities contained in the entity map
+
+---------------------------------------------------------------------------- */
 void EntityManager::Display()
 {
-	for (std::vector<CBaseEntity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	EntityMap::iterator it;
+	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
 	{
-		CBaseEntity* entity = *it;
-		entity->Display();
+		it->second->Display();
 	}
 }
+
+

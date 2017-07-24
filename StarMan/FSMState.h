@@ -26,8 +26,11 @@
 ---------------------------------------------------------------------------- */
 class FSMState
 {
+private:
+	typedef std::map<int, int> TransitionsMap;
+
 protected:
-	std::map<int, int> transitions;
+	TransitionsMap transitions;
 
 	int mStateID;
 	bool mLocked;

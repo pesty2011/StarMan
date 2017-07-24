@@ -132,6 +132,8 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 	int evt = MSG_MASK_EVENT(msg.Msg);
 
 
+
+
 	switch (type)
 	{
 	case MSGTYPE_EVENT:
@@ -144,12 +146,7 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 
 	case MSGTYPE_PLAYBACK:
 		cout << "MSGTYPE_PLAYBACK received: " << evt << endl;
-
-		if (evt == MSGEVENT_ANIMPLAYBACK_PLAY)
-		{
-			string anim = *(string*)msg.Data;
-			Play(anim);
-		}
+		m_pFSM->RaiseTransition(evt);
 		break;
 	}
 

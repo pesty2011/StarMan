@@ -22,7 +22,7 @@ enum
 enum
 {
 	MSGEVENT_UNKNOWN = 0,					// ERROR, unknown
-	MSGEVENT_ANIMPLAYBACK_DONE,				// animatio completed
+	MSGEVENT_ANIMPLAYBACK_DONE,				// animation completed
 	MSGEVENT_ANIMPLAYBACK_LOOP,				// looping just occurred
 	MSGEVENT_ANIMPLAYBACK_BLEND,			// blend animation between 2 sequences
 	MSGEVENT_ANIMPLAYBACK_PLAY				// play a new animation

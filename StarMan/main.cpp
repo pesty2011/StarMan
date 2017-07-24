@@ -36,6 +36,7 @@ void Grid();
 
 void LoadBVH();
 
+void Print(string text);
 
 
 /*
@@ -44,7 +45,7 @@ void LoadBVH();
 */
 Camera			g_camera;			// the main camera
 GameTimer		g_timer;			// global timer for the application
-
+bool			bStartGame = false;
 
 
 bool g_key[256];
@@ -216,6 +217,8 @@ void Display(void) {
 	// display the entities on screen
 	EntityMgr->Display();
 
+
+	Print("STARMAN");
 	glutSwapBuffers(); //swap the buffers
 }
 
@@ -255,10 +258,11 @@ void Keyboard(unsigned char key, int x, int y)
 	else if (key == 'p')
 	{
 		// trigger playing an animation ...
-		CBaseEntity* entity = EntityMgr->FindEntity(GetNameOfEntity(StarMan_1));
+		CBaseEntity* entity = EntityMgr->FindEntity(StarMan_1);
 		if (entity != NULL)
 		{
-			entity->Play("karate-02");
+//			entity->Play("karate-02");
+			bStartGame = true;
 		}
 	}
 	else if (key == '0')
@@ -341,7 +345,11 @@ void Idle()
 	// update all of the entities
 	g_timer.Tick();									// Update timer
 	float dTime = g_timer.DeltaTime();				// calculate the delta timer
-	UpdateStarMan(dTime);
+
+	if (bStartGame == true)
+	{
+		UpdateStarMan(dTime);
+	}
 	Display();
 }
 
@@ -466,6 +474,23 @@ void DrawGrid()
 #endif
 	glPopMatrix();
 
+}
+
+
+
+void Print(string text)
+{
+	glPushMatrix();
+
+	glRasterPos2f(5.0f, 5.0f);
+	int len = (int)text.length();
+
+	for (int i = 0; i < len; i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, text[i]);
+	}
+
+	glPopMatrix();
 }
 
 

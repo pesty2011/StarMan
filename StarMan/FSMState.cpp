@@ -49,28 +49,30 @@ void FSMState::DelTransition(int trans, int stateID)
 
 int FSMState::GetTransitionStateID(int transition)
 {
-	int stateID = transitions.at(transition);
-	return stateID;
+	TransitionsMap::const_iterator it = transitions.find(transition);
+
+	if (it != transitions.end())
+	{
+		return it->second;
+	}
+
+	return 0;			// zero is always unknown state
 }
 
 
 
 void FSMState::Enter()
 {
-	cout << "FSMState: Enter" << endl;
 }
 
 
 
 void FSMState::Execute(float dTime)
 {
-//	cout << "FSMState: Execute" << endl;
 }
 
 
 
 void FSMState::Exit()
 {
-	cout << "FSMState: Exit" << endl;
-
 }

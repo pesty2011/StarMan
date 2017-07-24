@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include "..\BaseEntity.h"
 
 
@@ -10,7 +11,10 @@
 
 class EntityManager
 {
-	std::vector<CBaseEntity*> entities;
+	typedef std::map<int, CBaseEntity*> EntityMap;
+
+private:
+	EntityMap			m_EntityMap;
 
 public:
 	EntityManager();

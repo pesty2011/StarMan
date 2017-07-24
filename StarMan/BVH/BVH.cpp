@@ -281,6 +281,7 @@ void  BVH::Load( const char * bvh_file_name )
 	token = strtok( NULL, separator );
 	if ( token == NULL )  
 		goto bvh_error;
+
 	numFrames = atoi( token );
 
 

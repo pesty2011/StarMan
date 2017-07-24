@@ -22,23 +22,20 @@ CKarate02State::~CKarate02State()
 
 void CKarate02State::Enter()
 {
-	cout << "CKarate02State: Enter" << endl;
+	mOwner->Play("karate-02");
+
 }
 
 
 
 void CKarate02State::Execute(float dTime)
 {
-	cout << "CKarate02State: Execute" << endl;
-
 }
 
 
 
 void CKarate02State::Exit()
 {
-	cout << "CKarate02State: Exit" << endl;
-
 }
 
 
