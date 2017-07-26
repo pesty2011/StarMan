@@ -13,6 +13,8 @@
 #include <map>
 #include <string>
 
+#include "..\3Dutil.h"
+
 using namespace  std;
 
 
@@ -26,8 +28,10 @@ static const char Zposition[] = "Zposition";
 
 
 
+
 class  BVH
 {
+
 public:
 	enum  ChannelEnum
 	{
@@ -74,6 +78,9 @@ private:
 	double					interval;
 	double*					motion;
 
+	vector<t3Point*>		worldPos;
+	t3Point					world;
+
 // Constructor, Deconstructor stuff
 public:
 	BVH();
@@ -115,9 +122,12 @@ public:
 
 	// Rendering methods for the BVH system
 public:
-	void			RenderFigure( int frame_no, float scale = 1.0f );
-	static void		RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
-	static void		RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
+	void			RenderFigure(int frame_no, float scale = 1.0f);
+	void			RenderFigure(t3Point pos, int frameNum, float scale = 1.0f);
+	void			RenderBindFigure(t3Point pos, int frameNum, float scale);
+	void			RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
+	void			RenderBindPose(const Joint* pJoint, const double* data, float scale = 1.0f);
+	void			RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
 };
 
 

@@ -2,6 +2,10 @@
 
 #include "States\Karate01State.h"
 #include "States\Karate02State.h"
+#include "States\Karate03State.h"
+#include "States\Karate04State.h"
+#include "States\Karate05State.h"
+#include "States\Karate06State.h"
 
 
 /* ----------------------------------------------------------------------------
@@ -13,7 +17,7 @@ enum
 {
 	STATEID_UNKNOWN = 0,
 
-	STATEID_KARATE_01,
+	STATEID_KARATE_FORWARD_KICK,
 	STATEID_KARATE_02,
 	STATEID_KARATE_03,
 	STATEID_KARATE_04,

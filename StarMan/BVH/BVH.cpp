@@ -23,6 +23,9 @@ BVH::BVH( const char * bvh_file_name )
 	motion = NULL;
 	Clear();
 	Load( bvh_file_name );
+	
+	world.x = world.y = world.z = 0.0f;
+	world.x = 5.0f;
 }
 
 
@@ -129,7 +132,6 @@ void  BVH::Load( const char * bvh_file_name )
 	// loop through the file until we reach the end of it.
 	while ( !file.eof() )
 	{
-
 		if ( file.eof() )  
 			goto bvh_error;
 
@@ -180,17 +182,14 @@ void  BVH::Load( const char * bvh_file_name )
 				joint->children.push_back(new_joint);
 			}
 
-			// 関節名の読み込み
 			token = strtok( NULL, "" );
 			while ( *token == ' ' )  token++;
 			new_joint->name = token;
 
-			// インデックスへ追加
 			joint_index[ new_joint->name ] = new_joint;
 			continue;
 		}
 
-		// 末端情報の開始
 		if ( ( strcmp( token, "End" ) == 0 ) )
 		{
 			new_joint = joint;
@@ -198,10 +197,8 @@ void  BVH::Load( const char * bvh_file_name )
 			continue;
 		}
 
-		// 関節のオフセット or 末端位置の情報
 		if ( strcmp( token, "OFFSET" ) == 0 )
 		{
-			// 座標値を読み込み
 			token = strtok( NULL, separator );
 			x = token ? atof( token ) : 0.0;
 			token = strtok( NULL, separator );
@@ -209,7 +206,6 @@ void  BVH::Load( const char * bvh_file_name )
 			token = strtok( NULL, separator );
 			z = token ? atof( token ) : 0.0;
 			
-			// 関節のオフセットに座標値を設定
 			if ( is_site )
 			{
 				joint->has_site = true;
@@ -329,7 +325,18 @@ bvh_error:
 
 
 
+void BVH::RenderFigure(t3Point pos, int frameNum, float scale)
+{
+	world = pos;
+	RenderFigure(frameNum, scale);
+}
 
+
+void BVH::RenderBindFigure(t3Point pos, int frameNum, float scale)
+{
+	RenderBindPose(joints[0], motion + frameNum * numChannels, scale);
+
+}
 
 
 /* ============================================================================
@@ -347,6 +354,105 @@ void  BVH::RenderFigure( int frame_no, float scale )
 }
 
 
+
+void BVH::RenderBindPose(const Joint* pJoint, const double* data, float scale)
+{
+	glPushMatrix();
+
+
+	// check if this is the root joint of the skeleton
+	if (pJoint->parent == NULL)
+	{
+		// This translates the root ...
+		glTranslatef(world.x, world.y, world.z);
+		glTranslatef((float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale);
+
+	}
+	else
+	{
+		glTranslatef((float)pJoint->offset[0] * scale, (float)pJoint->offset[1] * scale, (float)pJoint->offset[2] * scale);
+	}
+
+
+	size_t  i;
+
+	for (i = 0; i < pJoint->channels.size(); i++)
+	{
+		Channel* channel = pJoint->channels[i];
+
+		if (channel->type == X_ROTATION)
+			glRotatef(0.0f, 1.0f, 0.0f, 0.0f);
+		else if (channel->type == Y_ROTATION)
+			glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
+		else if (channel->type == Z_ROTATION)
+			glRotatef(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+
+
+	if (pJoint->children.size() == 0)
+	{
+		RenderBone(0.0f, 0.0f, 0.0f, 
+			(float)pJoint->site[0] * scale, 
+			(float)pJoint->site[1] * scale,
+			(float)pJoint->site[2] * scale);
+	}
+
+
+
+	if (pJoint->children.size() == 1)
+	{
+		Joint* child = pJoint->children[0];
+		RenderBone(0.0f, 0.0f, 0.0f, 
+			(float)child->offset[0] * scale, 
+			(float)child->offset[1] * scale, 
+			(float)child->offset[2] * scale);
+	}
+
+
+
+	if (pJoint->children.size() > 1)
+	{
+		float  center[3] = { 0.0f, 0.0f, 0.0f };
+
+		for (i = 0; i < pJoint->children.size(); i++)
+		{
+			Joint* child = pJoint->children[i];
+
+			center[0] += (float)child->offset[0];
+			center[1] += (float)child->offset[1];
+			center[2] += (float)child->offset[2];
+		}
+
+		center[0] /= pJoint->children.size() + 1;
+		center[1] /= pJoint->children.size() + 1;
+		center[2] /= pJoint->children.size() + 1;
+
+		RenderBone(0.0f, 0.0f, 0.0f, 
+			center[0] * scale, 
+			center[1] * scale, 
+			center[2] * scale);
+
+
+
+		for (i = 0; i < pJoint->children.size(); i++)
+		{
+			Joint* child = pJoint->children[i];
+			RenderBone(center[0] * scale,
+						center[1] * scale,
+						center[2] * scale,
+						(float)child->offset[0] * scale,
+						(float)child->offset[1] * scale,
+						(float)child->offset[2] * scale);
+		}
+	}
+
+	for (i = 0; i < pJoint->children.size(); i++)
+	{
+		RenderFigure(pJoint->children[i], data, scale);
+	}
+	glPopMatrix();
+}
 
 
 /* ============================================================================
@@ -370,7 +476,7 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	{
 
 		// This translates the root ...
-//		glTranslatef(0, 5.0f, 0);
+		glTranslatef(world.x, world.y, world.z);
 		glTranslatef( (float)data[ 0 ] * scale, (float)data[ 1 ] * scale, (float)data[ 2 ] * scale );
 
 	}
@@ -479,7 +585,16 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 	GLdouble  dir_z = z1 - z0;
 	GLdouble  bone_length = sqrt( dir_x*dir_x + dir_y*dir_y + dir_z*dir_z );
 
+	glLineWidth(2.0);
+//	glColor3f(1.0f, 0, 0);
+	glBegin(GL_LINES);
+	glVertex3f(x0, y0, z0);
+	glVertex3f(x1, y1, z1);
+	glEnd();
 
+
+	
+#if 0
 	if (quad_obj == NULL)
 	{
 		// create a new quadric primative
@@ -559,7 +674,11 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 	// Draw the cyclinder
 	gluCylinder( quad_obj, radius, radius, bone_length, slices, stack ); 
 
+
+
+
 	glPopMatrix();
+#endif
 }
 
 

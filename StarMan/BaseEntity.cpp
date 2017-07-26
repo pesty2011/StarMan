@@ -86,13 +86,13 @@ void CBaseEntity::Init()
 	FSMState*	state;
 
 	state = new CKarate01State(this);
-	state->SetID(STATEID_KARATE_01);
+	state->SetID(STATEID_KARATE_FORWARD_KICK);
 	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_02);
 	m_pFSM->AddState(state);
 
 	state = new CKarate02State(this);
 	state->SetID(STATEID_KARATE_02);
-	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_01);
+	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_FORWARD_KICK);
 	m_pFSM->AddState(state);
 
 

@@ -221,8 +221,10 @@ void CAnimPlayer::Display()
 {
 	if (m_pMotionData)
 	{
+		t3Point pos(0.0f, 0.0f, 0.0f);
 		glColor3f(1.0, 1.0f, 1.0f);
 		m_pMotionData->RenderFigure(mCurrFrame, 0.05f);
+//		m_pMotionData->RenderBindFigure(pos, mCurrFrame, 0.05f);
 	}
 }
 
