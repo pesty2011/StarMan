@@ -19,7 +19,7 @@ CBaseEntity::CBaseEntity(int id)
 	m_pAnim = new CAnimPlayer(this);
 	m_pFSM = new FSMSystem(this);
 
-	Init();
+	m_pTarget = NULL;
 }
 
 CBaseEntity::CBaseEntity()
@@ -28,6 +28,11 @@ CBaseEntity::CBaseEntity()
 
 	mParent = NULL;					// No parent class at this point
 	mType = EN_Unknown;				// unknown type;
+	m_pTarget = NULL;
+
+	m_pAnim = new CAnimPlayer(this);
+	m_pFSM = new FSMSystem(this);
+
 }
 
 
@@ -75,27 +80,8 @@ void CBaseEntity::DeleteChild(CBaseEntity* child)
 }
 
 
-/*
-	Summary:
-	Lets hard code a FSM controller for the animation system
-
-
-*/
 void CBaseEntity::Init()
 {
-	FSMState*	state;
-
-	state = new CKarate01State(this);
-	state->SetID(STATEID_KARATE_FORWARD_KICK);
-	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_02);
-	m_pFSM->AddState(state);
-
-	state = new CKarate02State(this);
-	state->SetID(STATEID_KARATE_02);
-	state->AddTransition(MSGEVENT_ANIMPLAYBACK_DONE, STATEID_KARATE_FORWARD_KICK);
-	m_pFSM->AddState(state);
-
-
 }
 
 void CBaseEntity::Play(string animName)
@@ -108,7 +94,6 @@ void CBaseEntity::Play(string animName)
 
 void CBaseEntity::Update(float dTime)
 {
-//	cout << "Updating: " << mName << endl;
 	m_pFSM->Update(dTime);
 
 	if (m_pAnim)

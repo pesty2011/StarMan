@@ -146,6 +146,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageDispatch.cpp" />
     <ClCompile Include="Skeleton.cpp" />
+    <ClCompile Include="StarMan1.cpp" />
+    <ClCompile Include="StarMan2.cpp" />
     <ClCompile Include="States\Karate01State.cpp" />
     <ClCompile Include="States\Karate02State.cpp" />
     <ClCompile Include="States\Karate03State.cpp" />
@@ -174,6 +176,8 @@
     <ClInclude Include="KarateStates.h" />
     <ClInclude Include="MessageDispatch.h" />
     <ClInclude Include="Skeleton.h" />
+    <ClInclude Include="StarMan1.h" />
+    <ClInclude Include="StarMan2.h" />
     <ClInclude Include="States\Karate01State.h" />
     <ClInclude Include="States\Karate02State.h" />
     <ClInclude Include="States\Karate03State.h" />

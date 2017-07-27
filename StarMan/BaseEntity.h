@@ -39,8 +39,12 @@ public:
 	CBaseEntity();
 	~CBaseEntity();
 
-	float					mPosition[3];	// current world position
-	float					mForward[3];	// current forward orientation
+	t3Point					mColour;		// colour of the entity
+	t3Point					mPosition;		// current world position
+	t3Point					mDir;			// facing direction 
+
+
+	CBaseEntity*			m_pTarget;		// who is my facing target
 
 	string					mName;			// name of animation base object
 
@@ -59,10 +63,18 @@ public:
 	void					SetName(string name);
 	int						GetID() { return mID; }
 
-	void					Init();
+	virtual void			Init();
 	void					Play(string animName);
 	virtual void			Update(float dTime);
 	virtual void			Display();
+
+
+	t3Point					GetPos() { return mPosition; }
+	t3Point					GetColor() { return mColour; }
+	t3Point					GetDir() { return mDir; }
+
+	void					SetTarget(CBaseEntity* entity) { m_pTarget = entity; }
+	CBaseEntity*			GetTarget() { return m_pTarget; }
 
 	virtual bool			OnHandleMessage(const EntityMessage& msg);
 };

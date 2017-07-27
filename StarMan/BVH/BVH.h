@@ -80,6 +80,7 @@ private:
 
 	vector<t3Point*>		worldPos;
 	t3Point					world;
+	t3Point					m_Facing;
 
 // Constructor, Deconstructor stuff
 public:
@@ -128,6 +129,9 @@ public:
 	void			RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
 	void			RenderBindPose(const Joint* pJoint, const double* data, float scale = 1.0f);
 	void			RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
+
+	void			SetDir(t3Point facing) { m_Facing = facing; }
+	void			SetPos(t3Point pos) { world = pos; }
 };
 
 

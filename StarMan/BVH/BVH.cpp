@@ -15,6 +15,9 @@ BVH::BVH()
 {
 	motion = NULL;
 	Clear();
+
+	world = t3Point(0.0f, 0.0f, 0.0f);
+	m_Facing = t3Point(0.0f, 0.0f, 0.0f);
 }
 
 
@@ -24,8 +27,9 @@ BVH::BVH( const char * bvh_file_name )
 	Clear();
 	Load( bvh_file_name );
 	
-	world.x = world.y = world.z = 0.0f;
-	world.x = 5.0f;
+
+	world = t3Point(0.0f, 0.0f, 0.0f);
+	m_Facing = t3Point(0.0f, 0.0f, 0.0f);
 }
 
 
@@ -477,19 +481,20 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 
 		// This translates the root ...
 		glTranslatef(world.x, world.y, world.z);
-		glTranslatef( (float)data[ 0 ] * scale, (float)data[ 1 ] * scale, (float)data[ 2 ] * scale );
+		glRotatef(m_Facing.y, 0.0f, 1.0f, 0.0f);
+		glTranslatef( (float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale );
 
 	}
 	else
 	{
-		glTranslatef((float)joint->offset[ 0 ] * scale, (float)joint->offset[ 1 ] * scale, (float)joint->offset[ 2 ] * scale );
+		glTranslatef((float)joint->offset[0] * scale, (float)joint->offset[1] * scale, (float)joint->offset[2] * scale );
 	}
 
 
 	size_t  i;
 	for ( i = 0; i < joint->channels.size(); i++ )
 	{
-		Channel* channel = joint->channels[ i ];
+		Channel* channel = joint->channels[i];
 
 		if ( channel->type == X_ROTATION )
 			glRotatef((float)data[ channel->index ], 1.0f, 0.0f, 0.0f );
@@ -501,19 +506,20 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 
 
 
+
+	// if there are no children, just render the bone to the joint site
 	if ( joint->children.size() == 0 )
 	{
-		RenderBone( 0.0f, 0.0f, 0.0f, (float)joint->site[ 0 ] * scale, (float)joint->site[ 1 ] * scale, (float)joint->site[ 2 ] * scale );
+		RenderBone( 0.0f, 0.0f, 0.0f, (float)joint->site[0] * scale, (float)joint->site[1] * scale, (float)joint->site[2] * scale );
 	}
 
 
-
+	// if there is only one child, render the bone to the offset of the next child
 	if ( joint->children.size() == 1 )
 	{
 		Joint* child = joint->children[0];
 		RenderBone( 0.0f, 0.0f, 0.0f, (float)child->offset[ 0 ] * scale, (float)child->offset[ 1 ] * scale, (float)child->offset[ 2 ] * scale );
 	}
-
 
 
 	if ( joint->children.size() > 1 )
@@ -659,7 +665,7 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 	up_y = dir_z * side_x - dir_x * side_z;
 	up_z = dir_x * side_y - dir_y * side_x;
 
-	// create openGL 4x4 rotation matrix
+	// create orientation 4x4 matrix
 	GLdouble  m[16] = { side_x, side_y, side_z, 0.0,
 	                    up_x,   up_y,   up_z,   0.0,
 	                    dir_x,  dir_y,  dir_z,  0.0,

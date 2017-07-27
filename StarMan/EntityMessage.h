@@ -69,7 +69,7 @@ struct EntityMessage
 	{}
 };
 
-const float			SmallestDelay = 0.25f;
+const float	SmallestDelay = 0.25f;
 
 inline bool operator==(const EntityMessage& m1, const EntityMessage& m2)
 {

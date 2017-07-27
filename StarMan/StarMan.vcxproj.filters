@@ -99,6 +99,12 @@
     <ClCompile Include="States\Karate06State.cpp">
       <Filter>States</Filter>
     </ClCompile>
+    <ClCompile Include="StarMan1.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="StarMan2.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3Dutil.h">
@@ -178,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="States\Karate06State.h">
       <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="StarMan1.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="StarMan2.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

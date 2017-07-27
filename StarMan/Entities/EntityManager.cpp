@@ -38,8 +38,16 @@ EntityManager* EntityManager::Instance()
 ---------------------------------------------------------------------------- */
 void EntityManager::Clear()
 {
+	EntityMap::iterator it;
+
+	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
+	{
+		CBaseEntity* entity = it->second;
+		delete entity;
+	}
 	m_EntityMap.clear();
 }
+
 
 
 
@@ -170,7 +178,8 @@ void EntityManager::Update(float dTime)
 	EntityMap::iterator it;
 	for (it = m_EntityMap.begin(); it != m_EntityMap.end(); it++)
 	{
-		it->second->Update(dTime);
+		CBaseEntity* entity = it->second;
+		entity->Update(dTime);
 	}
 }
 

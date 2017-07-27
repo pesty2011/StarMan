@@ -1,8 +1,14 @@
 #include <Windows.h>
-#include <GL\glew.h>
-#include <GL\freeglut.h>
+
+#include <stdlib.h>
+#include <crtdbg.h>
 #include <iostream>
 #include <cmath>
+
+#include <GL\glew.h>
+#include <GL\freeglut.h>
+
+
 #include "Camera.h"
 #include "Helpers\GameTimer.h"
 #include "BVH\BVH.h"
@@ -10,12 +16,16 @@
 #include "EntityNames.h"
 #include "AssetManager.h"
 
+#include "StarMan1.h"
+#include "StarMan2.h"
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "freeglut.lib")
 
 
 using namespace std;
+
+#define _CRTDBG_MAP_ALLOC
 
 
 void Display();
@@ -77,11 +87,18 @@ void InitStarMan()
 	LoadBVH();
 	CBaseEntity* entity;
 
-	entity = new CBaseEntity(StarMan_1);
+	entity = new CStarMan1(StarMan_1);
 	EntityMgr->AddEntity(entity);
 
-//	entity = new CBaseEntity(StarMan_2);
-//	EntityMgr->AddEntity(entity);
+
+	entity = new CStarMan2(StarMan_2);
+	EntityMgr->AddEntity(entity);
+
+
+	// hard code in some targets for each of the 2 guys
+	EntityMgr->FindEntity(StarMan_1)->SetTarget(EntityMgr->FindEntity(StarMan_2));
+	EntityMgr->FindEntity(StarMan_2)->SetTarget(EntityMgr->FindEntity(StarMan_1));
+
 }
 
 
@@ -106,6 +123,8 @@ void UpdateStarMan(float dTime)
 ---------------------------------------------------------------------------- */
 void DestroyStarMan()
 {
+	// remove all of the starmen
+	EntityMgr->Clear();
 }
 
 
@@ -139,6 +158,12 @@ int main(int argc, char **argv)
 	glutTimerFunc(1, Update, 1);
 	glutMainLoop();
 
+
+
+//	DestroyStarMan();
+
+	_CrtDumpMemoryLeaks();
+
 	return 0;
 }
 
@@ -156,19 +181,19 @@ void LoadBVH()
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-04.bvh");
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-05.bvh");
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-06.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
 }
 
 
@@ -218,7 +243,7 @@ void Display(void) {
 	EntityMgr->Display();
 
 
-	Print("STARMAN");
+//	Print("STARMAN");
 	glutSwapBuffers(); //swap the buffers
 }
 
@@ -306,9 +331,6 @@ void Update(int value)
 
 
 
-
-
-
 void Timer(int value)
 {
 	if (g_fps_mode) {
@@ -339,6 +361,9 @@ void Timer(int value)
 
 	glutTimerFunc(1, Timer, 0);
 }
+
+
+
 
 void Idle()
 {
