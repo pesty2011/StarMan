@@ -227,6 +227,32 @@ void CAnimPlayer::Display()
 
 		m_pMotionData->SetDir(m_pOwner->GetDir());
 		m_pMotionData->RenderFigure(pos, mCurrFrame, 0.05f);
+
+
+
+		m_pMotionData->RenderBones();
+#if false
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glPushMatrix();
+		glLoadIdentity();
+		t3Point hip = m_pMotionData->GetHipPosition();
+		glTranslatef(hip.x, hip.y, hip.z);
+
+		static GLUquadric*  pQuad = NULL;
+		if (pQuad == NULL)
+		{
+			// create a new quadric primative
+			pQuad = gluNewQuadric();
+		}
+
+		gluQuadricDrawStyle(pQuad, GLU_LINE);
+		gluQuadricNormals(pQuad, GLU_FLAT);
+
+
+		gluSphere(pQuad, 0.1f, 10.0f, 3.0f);
+
+		glPopMatrix();
+#endif
 	}
 }
 

@@ -7,6 +7,8 @@
 #include <fstream>
 #include <string.h>
 #include <math.h>
+#include <iostream>
+
 #include <GL/glut.h>
 #include "BVH.h"
 
@@ -16,8 +18,8 @@ BVH::BVH()
 	motion = NULL;
 	Clear();
 
-	world = t3Point(0.0f, 0.0f, 0.0f);
-	m_Facing = t3Point(0.0f, 0.0f, 0.0f);
+	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
+	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
 }
 
 
@@ -28,8 +30,8 @@ BVH::BVH( const char * bvh_file_name )
 	Load( bvh_file_name );
 	
 
-	world = t3Point(0.0f, 0.0f, 0.0f);
-	m_Facing = t3Point(0.0f, 0.0f, 0.0f);
+	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
+	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
 }
 
 
@@ -68,8 +70,8 @@ void  BVH::Clear()
 	joints.clear();
 	joint_index.clear();
 	
-	numFrames = 0;
-	interval = 0.0;
+	m_NumFrames = 0;
+	m_Interval = 0.0;
 	motion = NULL;
 }
 
@@ -191,6 +193,11 @@ void  BVH::Load( const char * bvh_file_name )
 			new_joint->name = token;
 
 			joint_index[ new_joint->name ] = new_joint;
+
+			// add in working frame ...
+			m_BoneMap[new_joint->name] = t3Point(0.0f, 0.0f, 0.0f);
+			std::cout << new_joint->name << std::endl;
+
 			continue;
 		}
 
@@ -282,7 +289,7 @@ void  BVH::Load( const char * bvh_file_name )
 	if ( token == NULL )  
 		goto bvh_error;
 
-	numFrames = atoi( token );
+	m_NumFrames = atoi( token );
 
 
 	file.getline( line, BUFFER_LENGTH );
@@ -292,17 +299,17 @@ void  BVH::Load( const char * bvh_file_name )
 	token = strtok( NULL, separator );
 	if ( token == NULL )  
 		goto bvh_error;
-	interval = atof( token );
+	m_Interval = atof( token );
 
 	// save off the number of channels ...
 	numChannels = channels.size();
 
 	// create a motion array to accomodate the number 
 	// of frames and the number of channels.
-	motion = new double[ numFrames * numChannels ];
+	motion = new double[ m_NumFrames * numChannels ];
 
 	// loop through all of the frames
-	for (i = 0; i < numFrames; i++)
+	for (i = 0; i < m_NumFrames; i++)
 	{
 		file.getline( line, BUFFER_LENGTH );
 		token = strtok( line, separator );
@@ -331,7 +338,7 @@ bvh_error:
 
 void BVH::RenderFigure(t3Point pos, int frameNum, float scale)
 {
-	world = pos;
+	m_Pos = pos;
 	RenderFigure(frameNum, scale);
 }
 
@@ -368,7 +375,7 @@ void BVH::RenderBindPose(const Joint* pJoint, const double* data, float scale)
 	if (pJoint->parent == NULL)
 	{
 		// This translates the root ...
-		glTranslatef(world.x, world.y, world.z);
+		glTranslatef(m_Pos.x, m_Pos.y, m_Pos.z);
 		glTranslatef((float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale);
 
 	}
@@ -472,17 +479,22 @@ void BVH::RenderBindPose(const Joint* pJoint, const double* data, float scale)
 ============================================================================ */
 void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 {
+	GLfloat modelMatrix[16];
+
 	glPushMatrix();
 
-
-	// check if this is the root joint of the skeleton
+	// ROOT ?
 	if ( joint->parent == NULL )
 	{
 
 		// This translates the root ...
-		glTranslatef(world.x, world.y, world.z);
-		glRotatef(m_Facing.y, 0.0f, 1.0f, 0.0f);
+		glTranslatef(m_Pos.x, m_Pos.y, m_Pos.z);
+		glRotatef(m_Dir.y, 0.0f, 1.0f, 0.0f);
 		glTranslatef( (float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale );
+
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+		m_HipPosition = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+		m_BoneMap[joint->name] = m_HipPosition;
 
 	}
 	else
@@ -505,7 +517,9 @@ void  BVH::RenderFigure( const Joint * joint, const double * data, float scale )
 	}
 
 
-
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+	t3Point pt = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+	m_BoneMap[joint->name] = pt;
 
 	// if there are no children, just render the bone to the joint site
 	if ( joint->children.size() == 0 )
@@ -687,4 +701,36 @@ void BVH::RenderBone( float x0, float y0, float z0, float x1, float y1, float z1
 #endif
 }
 
+
+void BVH::RenderBones()
+{
+
+	BoneMap::iterator it;
+	for (it = m_BoneMap.begin(); it != m_BoneMap.end(); it++)
+	{
+		t3Point pt = it->second;
+		
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glPushMatrix();
+		glLoadIdentity();
+
+		glTranslatef(pt.x, pt.y, pt.z);
+
+		static GLUquadric*  pQuad = NULL;
+		if (pQuad == NULL)
+		{
+			// create a new quadric primative
+			pQuad = gluNewQuadric();
+		}
+
+		gluQuadricDrawStyle(pQuad, GLU_LINE);
+		gluQuadricNormals(pQuad, GLU_FLAT);
+
+
+		gluSphere(pQuad, 0.1f, 10.0f, 3.0f);
+
+		glPopMatrix();
+
+	}
+}
 

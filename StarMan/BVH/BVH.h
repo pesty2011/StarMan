@@ -31,6 +31,8 @@ static const char Zposition[] = "Zposition";
 
 class  BVH
 {
+private:
+	typedef std::map<string, t3Point> BoneMap;
 
 public:
 	enum  ChannelEnum
@@ -74,13 +76,14 @@ private:
 	vector<Joint*>			joints;					// vector of joint pointers
 	map<string, Joint*>		joint_index;			// map lookup of all of the joints
 
-	int						numFrames;
-	double					interval;
+	int						m_NumFrames;
+	double					m_Interval;
 	double*					motion;
 
-	vector<t3Point*>		worldPos;
-	t3Point					world;
-	t3Point					m_Facing;
+	t3Point					m_Pos;
+	t3Point					m_Dir;
+	t3Point					m_HipPosition;
+	BoneMap					m_BoneMap;
 
 // Constructor, Deconstructor stuff
 public:
@@ -116,8 +119,8 @@ public:
 	}
 
 	
-	int				GetNumFrame() const { return  numFrames; }
-	double			GetInterval() const { return  interval; }
+	int				GetNumFrame() const { return  m_NumFrames; }
+	double			GetInterval() const { return  m_Interval; }
 	double			GetMotion( int f, int c ) const { return  motion[ f*numChannels + c ]; }
 	void			SetMotion( int f, int c, double v ) { motion[ f*numChannels + c ] = v; }
 
@@ -128,10 +131,13 @@ public:
 	void			RenderBindFigure(t3Point pos, int frameNum, float scale);
 	void			RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
 	void			RenderBindPose(const Joint* pJoint, const double* data, float scale = 1.0f);
+	void			RenderBones();
 	void			RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
 
-	void			SetDir(t3Point facing) { m_Facing = facing; }
-	void			SetPos(t3Point pos) { world = pos; }
+	void			SetDir(t3Point facing) { m_Dir = facing; }
+	void			SetPos(t3Point pos) { m_Pos = pos; }
+	t3Point			GetHipPosition() { return m_HipPosition; }
+
 };
 
 
