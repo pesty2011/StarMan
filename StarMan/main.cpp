@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 void LoadBVH()
 {
 	// load up the assets for the demo ...
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
+//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
 
 
 	// karate moves
@@ -290,9 +290,9 @@ void Keyboard(unsigned char key, int x, int y)
 			bStartGame = true;
 		}
 	}
-	else if (key == '0')
+	else if (key == 'r')
 	{
-		//StopAnimation();
+		AssetMgr->ToggleRawData();
 	}
 
 
@@ -440,6 +440,7 @@ void DrawGrid()
 #if true
 	const double gs = 100;
 
+	glLineWidth(1.0f);
 	glColor3d(0.1, 0.1, 0.1);		// create the grid
 	for (double i = -gs; i <= gs; i += 5)
 	{

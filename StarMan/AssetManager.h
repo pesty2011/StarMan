@@ -29,6 +29,8 @@ public:
 
 	void Clear();
 
+	void ToggleRawData();
+
 
 	static CAssetManager* Instance();
 };

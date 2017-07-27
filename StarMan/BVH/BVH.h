@@ -1,8 +1,15 @@
 /**
-***  BVH Player
-***  Copyright (c) 2004-2017, Masaki OSHITA (www.oshita-lab.org)
-***  Released under the MIT license http://opensource.org/licenses/mit-license.php
-**/
+	BVH Player
+	Copyright (c) 2004-2017, Masaki OSHITA (www.oshita-lab.org)
+	Released under the MIT license http://opensource.org/licenses/mit-license.php
+
+	Modified by Rob Anderson.
+
+	Added in cache system in order to cache modelview point.
+	Added bone colour
+
+
+*/
 
 
 #ifndef  _BVH_H_
@@ -13,36 +20,28 @@
 #include <map>
 #include <string>
 
+
 #include "..\3Dutil.h"
 
 using namespace  std;
 
 
-static const char Xrotation[] = "Xrotation";
-static const char Yrotation[] = "Yrotation";
-static const char Zrotation[] = "Zrotation";
-
-static const char Xposition[] = "Xposition";
-static const char Yposition[] = "Yposition";
-static const char Zposition[] = "Zposition";
-
-
-
-
 class  BVH
 {
-private:
-	typedef std::map<string, t3Point> BoneMap;
-
 public:
+	// predefine for 
+	struct Joint;
+	struct Channel;
+
+
 	enum  ChannelEnum
 	{
 		X_ROTATION, Y_ROTATION, Z_ROTATION,
 		X_POSITION, Y_POSITION, Z_POSITION
 	};
-	
-	struct  Joint;							// define this for Channel
-	
+
+
+
 	struct Channel
 	{
 		Joint*               joint;
@@ -54,15 +53,27 @@ public:
 
 	struct Joint
 	{
-		string				name;
-		int					index;
-		Joint*				parent;
-		vector<Joint*>		children;
-		double				offset[3];
-		bool				has_site;
-		double				site[3];
-		vector<Channel*>	channels;
+		string				name;					// name of the joint
+		int					index;					// index ?
+		Joint*				parent;					// parent joint
+		vector<Joint*>		children;				// number of children in joint
+		double				offset[3];				// offset of the joint
+		bool				has_site;				// ?
+		double				site[3];				// ?
+		vector<Channel*>	channels;				// channels in the joint
+
+		float				colour[3];				// colour of the joint
+		float				baseColour[3];			// default colour
+		float				timer;					// timer for bone colour
 	};
+
+
+private:
+	typedef std::map<string, t3Point> BoneMap;
+	typedef std::map<string, Joint*> JointIndexMap;
+	typedef std::vector<Joint*>  JointVector;
+	typedef std::vector<Channel*> ChannelVector;
+
 
 
 private:
@@ -71,14 +82,25 @@ private:
 	string					file_name;
 	string					motion_name;
 
-	int						numChannels;			// number of channels in capture data
-	vector<Channel*>		channels;				// array of all of the channel pointers
-	vector<Joint*>			joints;					// vector of joint pointers
-	map<string, Joint*>		joint_index;			// map lookup of all of the joints
+	int						m_NumChannels;			// number of channels in capture data
+	vector<Channel*>		m_Channels;				// array of all of the channel pointers
+	vector<Joint*>			m_Joints;					// vector of joint pointers
+	JointIndexMap			m_JointIndexMap;		// map lookup of all of the joints
+
+	bool					m_bRawData;
+
+	// this represents the stripped version of the BVH 
+	// motion data.
+	double*					m_pAnimData;
+	int						m_NumAnimFrames;
+	double					m_AnimInterval;
+
 
 	int						m_NumFrames;
 	double					m_Interval;
-	double*					motion;
+	double*					m_pMotion;
+
+
 
 	t3Point					m_Pos;
 	t3Point					m_Dir;
@@ -88,7 +110,7 @@ private:
 // Constructor, Deconstructor stuff
 public:
 	BVH();
-	BVH( const char * bvh_file_name );
+	BVH(const char* pBVHFilename);
 	~BVH();
 
 	void			Clear();
@@ -96,50 +118,69 @@ public:
 
 public:
 	bool			IsLoadSuccess() const { return isLoaded; }
+	void			ToggleRawData() { m_bRawData ^= true; }
+	bool			IsRawData() { return m_bRawData; }
+
 
 	const string&   GetFileName() const { return file_name; }
 	const string&   GetMotionName() const { return motion_name; }
 
 	
-	const int       GetNumJoint() const { return  joints.size(); }
-	const Joint*    GetJoint( int no ) const { return  joints[no]; }
-	const int       GetNumChannel() const { return  channels.size(); }
-	const Channel*  GetChannel( int no ) const { return  channels[no]; }
+	const int       GetNumJoint() const { return  m_Joints.size(); }
+	const Joint*    GetJoint( int no ) const { return  m_Joints[no]; }
+	const int       GetNumChannel() const { return  m_Channels.size(); }
+	const Channel*  GetChannel( int no ) const { return  m_Channels[no]; }
 
 
 	const Joint*    GetJoint( const string& jointName ) const  {
-		map<string, Joint*>::const_iterator  i = joint_index.find(jointName);
-		return  ( i != joint_index.end() ) ? (*i).second : NULL; 
+		JointIndexMap::const_iterator  i = m_JointIndexMap.find(jointName);
+		return  ( i != m_JointIndexMap.end() ) ? (*i).second : NULL; 
 	}
 
 
 	const Joint*   GetJoint(const char* jointName ) const  {
-		map<string, Joint*>::const_iterator  i = joint_index.find(jointName);
-		return  ( i != joint_index.end() ) ? (*i).second : NULL; 
+		JointIndexMap::const_iterator  i = m_JointIndexMap.find(jointName);
+		return  ( i != m_JointIndexMap.end() ) ? (*i).second : NULL; 
 	}
 
+
+
+	// custom colour functions
+	void			SetBonesBaseColour(float r, float g, float b);
+	void			SetBoneColour(string boneName, float time, float r, float g, float b);
+
+
+	t3Point			Lerp(float time, t3Point a, t3Point b);
+	void			StripBVHFile(float amount);
 	
-	int				GetNumFrame() const { return  m_NumFrames; }
-	double			GetInterval() const { return  m_Interval; }
-	double			GetMotion( int f, int c ) const { return  motion[ f*numChannels + c ]; }
-	void			SetMotion( int f, int c, double v ) { motion[ f*numChannels + c ] = v; }
+	int	GetNumFrame() const 
+	{ 
+		if (m_bRawData == true)
+			return  m_NumFrames;
+		else
+			return m_NumAnimFrames;
+	}
+
+
+	double GetInterval() const 
+	{ 
+		if (m_bRawData == true)
+			return  m_Interval;
+		else
+			return m_AnimInterval;
+	}
+
 
 	// Rendering methods for the BVH system
 public:
-	void			RenderFigure(int frame_no, float scale = 1.0f);
-	void			RenderFigure(t3Point pos, int frameNum, float scale = 1.0f);
-	void			RenderBindFigure(t3Point pos, int frameNum, float scale);
+	void			RenderFigure(int frameNum, float scale = 1.0f);
 	void			RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
-	void			RenderBindPose(const Joint* pJoint, const double* data, float scale = 1.0f);
 	void			RenderBones();
-	void			RenderBone( float x0, float y0, float z0, float x1, float y1, float z1 );
+	void			RenderBone(const Joint* joint, float x0, float y0, float z0, float x1, float y1, float z1 );
 
 	void			SetDir(t3Point facing) { m_Dir = facing; }
 	void			SetPos(t3Point pos) { m_Pos = pos; }
-	t3Point			GetHipPosition() { return m_HipPosition; }
-
 };
-
 
 
 #endif // _BVH_H_

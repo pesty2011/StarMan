@@ -51,6 +51,7 @@ CAnimPlayer::CAnimPlayer()
 }
 
 
+
 CAnimPlayer::~CAnimPlayer()
 {
 }
@@ -141,6 +142,9 @@ void CAnimPlayer::SetBVH(BVH* data)
 		mTotalTime = (float)mNumFrames * mInterval;
 		mCurrFrame = 0;
 		mPrevFrame = 0;
+
+		t3Point colour = m_pOwner->GetColor();
+		data->SetBonesBaseColour(colour.x, colour.y, colour.z);
 	}
 }
 
@@ -157,33 +161,28 @@ void CAnimPlayer::SetBVH(string motionName)
 
 		mCurrFrame = 0;
 		mPrevFrame = 0;
+
+		t3Point colour = m_pOwner->GetColor();
+		m_pMotionData->SetBonesBaseColour(colour.x, colour.y, colour.z);
 	}
 }
 
 
+/* ----------------------------------------------------------------------------
+	Summary:
+	The Update method will apply the delta time to the animation timeline
+	and calculate out the different frames.
 
+	The method stores off the previous frame and updates the 
+
+	Parameters:
+	[in] dTime : delta time since last frame
+
+---------------------------------------------------------------------------- */
 void CAnimPlayer::Update(float dTime)
 {
 	if (bIsPlaying)
 	{
-#if false
-		mFrameTime += dTime;
-
-		float animStep = mFrameTime;
-		int frameinc = 0;
-		while (animStep > 0)
-		{
-			animStep -= mInterval;
-			if (animStep > 0.0f)
-			{
-				frameinc++;
-			}
-		}
-
-		mCurrFrame += frameinc;
-		mCurrFrame = mCurrFrame % m_pMotionData->GetNumFrame();
-		mFrameTime = 0;
-#else
 		mFrameTime += dTime;
 		float time = mFrameTime / mTotalTime;
 		float frame = (float)m_pMotionData->GetNumFrame() * time;
@@ -201,15 +200,11 @@ void CAnimPlayer::Update(float dTime)
 			
 			// send a message that we are done doing this move ...
 			Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, m_pOwner->GetID(), m_pOwner->GetID(), CREATE_MESSAGE(MSGTYPE_PLAYBACK, MSGEVENT_ANIMPLAYBACK_DONE) , 0, NULL);
-
 		}
 
 
 		// calculate the percentage moves here if we need to blend going 
 		// into another move or not ...
-
-
-#endif
 	}
 }
 
@@ -226,9 +221,8 @@ void CAnimPlayer::Display()
 		glColor3f(colour.v[0], colour.v[1], colour.v[2]);
 
 		m_pMotionData->SetDir(m_pOwner->GetDir());
-		m_pMotionData->RenderFigure(pos, mCurrFrame, 0.05f);
-
-
+		m_pMotionData->SetPos(m_pOwner->GetPos());
+		m_pMotionData->RenderFigure(mCurrFrame, 0.05f);
 
 		m_pMotionData->RenderBones();
 #if false

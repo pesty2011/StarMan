@@ -66,11 +66,11 @@ BVH* CAssetManager::FindMotion(const string& name)
 
 
 /* ----------------------------------------------------------------------------
-Summary:
-delete an entity from the manager
+	Summary:
+	add a motion into the asset manager
 
-Parameters:
-[in] entity : pointer to the entity to be removed
+	Parameters:
+	[in] data : pointer to the BVH instance
 
 ---------------------------------------------------------------------------- */
 bool CAssetManager::AddMotion(BVH* data)
@@ -88,6 +88,7 @@ bool CAssetManager::AddMotion(const char* motionName)
 	BVH* bvh = new BVH(motionName);
 	if (bvh != NULL)
 	{
+		bvh->StripBVHFile(6.0f);			// 6 frames a second
 		return AddMotion(bvh);
 	}
 
@@ -128,3 +129,12 @@ void CAssetManager::DelMotion(const string& name)
 }
 
 
+void CAssetManager::ToggleRawData()
+{
+	AssetMap::iterator	it;
+
+	for (it = assets.begin(); it != assets.end(); it++)
+	{
+		it->second->ToggleRawData();
+	}
+}
