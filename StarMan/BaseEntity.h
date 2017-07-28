@@ -14,10 +14,7 @@ class FSMSystem;
 enum EntityTypes
 {
 	EN_Unknown,
-	EN_Bone,
-	EN_Skeleton,
 	EN_Actor,
-	EN_Clip,
 };
 
 
@@ -77,5 +74,11 @@ public:
 	CBaseEntity*			GetTarget() { return m_pTarget; }
 
 	virtual bool			OnHandleMessage(const EntityMessage& msg);
+
+
+	// Collider system stuff
+public:
+	bool					GetBonePos(string name, t3Point* pt);
+
 };
 

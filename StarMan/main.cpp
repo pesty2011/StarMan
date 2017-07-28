@@ -15,6 +15,7 @@
 #include "Entities\EntityManager.h"
 #include "EntityNames.h"
 #include "AssetManager.h"
+#include "ColliderSystem.h"
 
 #include "StarMan1.h"
 #include "StarMan2.h"
@@ -153,14 +154,12 @@ int main(int argc, char **argv)
 	glutKeyboardUpFunc(KeyboardUp);
 	glutIdleFunc(Idle);
 
-	
 	glutTimerFunc(1, Timer, 0);
 	glutTimerFunc(1, Update, 1);
 	glutMainLoop();
 
 
-
-//	DestroyStarMan();
+	DestroyStarMan();
 
 	_CrtDumpMemoryLeaks();
 
@@ -173,7 +172,7 @@ void LoadBVH()
 	// load up the assets for the demo ...
 //	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
 
-
+#if _DEBUG
 	// karate moves
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-01.bvh");
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-02.bvh");
@@ -181,19 +180,40 @@ void LoadBVH()
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-04.bvh");
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-05.bvh");
 	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-06.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
+	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
+#else
+	AssetMgr->AddMotion(".\\bvh\\karate-01.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-02.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-03.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-04.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-05.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-06.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-07.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-08.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-09.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-10.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-11.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-12.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-13.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-14.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-15.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-16.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-17.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-18.bvh");
+	AssetMgr->AddMotion(".\\bvh\\karate-19.bvh");
+#endif
 }
 
 
@@ -379,6 +399,10 @@ void Idle()
 	{
 		UpdateStarMan(dTime);
 	}
+	
+	ColliderSys->Update();
+
+
 	Display();
 }
 

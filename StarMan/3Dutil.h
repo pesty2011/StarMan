@@ -24,6 +24,7 @@ struct t3Point
 	t3Point& operator += (const t3Point&);
 	t3Point& operator *= (const t3Point&);
 	t3Point operator-(t3Point);
+	t3Point operator+(t3Point);
 	t3Point operator* (t3Point);
 	t3Point operator* (float);
 	void operator=(t3Point);
@@ -71,6 +72,17 @@ inline t3Point t3Point::operator - (t3Point p2)
 	r.z = z - p2.z;
 	return (r);
 }
+
+
+inline t3Point t3Point::operator + (t3Point p2)
+{
+	t3Point r;
+	r.x = x + p2.x;
+	r.y = y + p2.y;
+	r.z = z + p2.z;
+	return (r);
+}
+
 
 
 inline t3Point t3Point::operator * (t3Point p2)

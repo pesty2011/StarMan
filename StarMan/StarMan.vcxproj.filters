@@ -93,6 +93,9 @@
     <ClCompile Include="StarMan2.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="ColliderSystem.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3Dutil.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="StarMan2.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderSystem.h">
+      <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

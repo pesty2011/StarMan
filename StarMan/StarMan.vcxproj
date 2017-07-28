@@ -135,6 +135,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_MBCS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ColliderSystem.cpp" />
     <ClCompile Include="Entities\EntityManager.cpp" />
     <ClCompile Include="FSMState.cpp" />
     <ClCompile Include="FSMSystem.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="BVH\BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="3Dutil.h" />
+    <ClInclude Include="ColliderSystem.h" />
     <ClInclude Include="Entities\EntityManager.h" />
     <ClInclude Include="EntityMessage.h" />
     <ClInclude Include="EntityNames.h" />

@@ -133,7 +133,32 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 		cout << "MSGTYPE_PLAYBACK received: " << evt << endl;
 		m_pFSM->RaiseTransition(evt);
 		break;
+	
+	case MSGTYPE_COLLISION:
+		cout << "MSGTYPE_COLLISION received: " << evt << endl;
+		tCollisionEvent* evt = (tCollisionEvent*)msg.Info;
+
+		cout << "From: " << evt->From << endl;
+		cout << "To: " << evt->From << endl;
+		cout << "BoneName: " << evt->BoneName << endl;
+
+		if (m_pAnim)
+		{
+			m_pAnim->SetBoneColour(evt->BoneName, 1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		break;
 	}
 
 	return true;
+}
+
+
+
+bool CBaseEntity::GetBonePos(std::string name, t3Point* pt)
+{
+	if (m_pAnim)
+	{
+		return m_pAnim->GetBonePos(name, pt);
+	}
+	return false;
 }

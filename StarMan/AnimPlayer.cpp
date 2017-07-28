@@ -134,6 +134,17 @@ void CAnimPlayer::Pause()
 
 
 
+bool CAnimPlayer::GetBonePos(std::string name, t3Point* pt)
+{
+	if (m_pMotionData)
+	{
+		return m_pMotionData->GetBonePos(name, pt);
+	}
+	return false;
+}
+
+
+
 void CAnimPlayer::SetBVH(BVH* data)
 {
 	m_pMotionData = data;
@@ -219,12 +230,10 @@ void CAnimPlayer::Update(float dTime)
 		}
 
 
-
 		// calculate the percentage moves here if we need to blend going 
 		// into another move or not ...
 		float startTime = mCurrFrame * interval;
 		float endTime = mNextFrame * interval;
-
 		mDeltaTime = (mFrameTime - startTime) / interval;
 
 #if _DEBUG
@@ -233,6 +242,13 @@ void CAnimPlayer::Update(float dTime)
 //			cout << "Delta: " << mDeltaTime << " From: " << mCurrFrame << " : " << mNextFrame << " Interval: " << interval << endl;
 		}
 #endif
+	}
+
+
+	// update the animation timers, just for visually changing the bone colours.
+	if (m_pMotionData)
+	{
+		m_pMotionData->UpdateTimers(dTime);
 	}
 }
 
@@ -253,6 +269,9 @@ void CAnimPlayer::Display()
 		m_pMotionData->RenderFigure(mCurrFrame, mNextFrame, 0.05f, mDeltaTime);
 
 		m_pMotionData->RenderBones();
+
+
+
 #if false
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glPushMatrix();
@@ -279,3 +298,11 @@ void CAnimPlayer::Display()
 }
 
 
+
+void CAnimPlayer::SetBoneColour(string boneName, float time, float r, float g, float b)
+{
+	if (m_pMotionData)
+	{
+		m_pMotionData->SetBoneColour(boneName, time, r, g, b);
+	}
+}

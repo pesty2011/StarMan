@@ -15,6 +15,7 @@ enum
 	MSGTYPE_EVENT,								// event occurrence
 	MSGTYPE_TRANSITION,							// transition event triggered
 	MSGTYPE_PLAYBACK,							// message from animation playback
+	MSGTYPE_COLLISION							// collision occurred
 };
 
 
@@ -25,8 +26,27 @@ enum
 	MSGEVENT_ANIMPLAYBACK_DONE,				// animation completed
 	MSGEVENT_ANIMPLAYBACK_LOOP,				// looping just occurred
 	MSGEVENT_ANIMPLAYBACK_BLEND,			// blend animation between 2 sequences
-	MSGEVENT_ANIMPLAYBACK_PLAY				// play a new animation
+	MSGEVENT_ANIMPLAYBACK_PLAY,				// play a new animation
+
+	MSGEVENT_COLLISION_COLLIDED,
 };
+
+
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
+	When a collision occurs, deliver this in the extra info
+	field of the message which can then be broken down.
+
+---------------------------------------------------------------------------- */
+typedef struct __CollisionEvent__
+{
+	int		From;
+	int		To;
+	string	BoneName;
+
+} tCollisionEvent;
 
 
 

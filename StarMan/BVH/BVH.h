@@ -49,8 +49,6 @@ public:
 		int                  index;
 	};
 
-
-
 	struct Joint
 	{
 		string				name;					// name of the joint
@@ -107,6 +105,8 @@ private:
 	t3Point					m_Dir;
 	t3Point					m_HipPosition;
 	BoneMap					m_BoneMap;
+
+
 
 // Constructor, Deconstructor stuff
 public:
@@ -187,6 +187,10 @@ public:
 
 	void			SetDir(t3Point facing) { m_Dir = facing; }
 	void			SetPos(t3Point pos) { m_Pos = pos; }
+
+	bool			GetBonePos(string name, t3Point* pt);
+
+	void			UpdateTimers(float dTime);
 };
 
 

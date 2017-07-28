@@ -27,16 +27,14 @@ BVH::BVH()
 }
 
 
-BVH::BVH( const char * bvh_file_name )
+BVH::BVH(const char * bvh_file_name)
 {
 	m_pMotion = NULL;
 	Clear();
-	Load( bvh_file_name );
+	Load(bvh_file_name);
 
 	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
 	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
-
-
 
 	m_bRawData = true;
 	m_bUseTranslation = true;
@@ -57,18 +55,19 @@ void  BVH::Clear()
 
 	int  i;
 
-	for (i = 0; i < channelSize; i++ )
+	for (i = 0; i < channelSize; i++)
 		delete m_Channels[i];
 
-	for (i = 0; i < jointSize; i++ )
+	for (i = 0; i < jointSize; i++)
 		delete m_Joints[i];
 
-	if ( m_pMotion != NULL )
+	if (m_pMotion != NULL)
 		delete m_pMotion;
 
 	if (m_pAnimData != NULL)
 		delete m_pAnimData;
 
+	m_BoneMap.clear();
 
 	isLoaded = false;
 	
@@ -240,8 +239,6 @@ void  BVH::Load(const char * bvh_file_name )
 
 			// add in cache working frame ...
 			m_BoneMap[new_joint->name] = t3Point(0.0f, 0.0f, 0.0f);
-//			std::cout << new_joint->name << std::endl;
-
 			continue;
 		}
 
@@ -594,7 +591,7 @@ void BVH::RenderBone(const Joint* joint, float x0, float y0, float z0, float x1,
 
 	glLineWidth(2.0);
 	
-	if (joint->timer != 0)
+	if (joint->timer > 0)
 		glColor3f(joint->colour[0], joint->colour[1], joint->colour[2]);
 	else
 		glColor3f(joint->baseColour[0], joint->baseColour[1], joint->baseColour[2]);
@@ -728,6 +725,38 @@ void BVH::RenderBones()
 
 /* ----------------------------------------------------------------------------
 	Summary:
+	Get the world bone position and return back to caller.  Given the
+	name of the bone, search the bonemap and set the world position
+	in the passed pointer.
+
+	Parameter:
+	[in] pt : pointer to point to hold the position
+	[in] name : the name of the bone to retrieve
+
+	Output:
+	true	:	found bone and returned position
+	false	:	bone doesn't exist.
+
+---------------------------------------------------------------------------- */
+bool BVH::GetBonePos(string name, t3Point* pt)
+{
+	BoneMap::const_iterator it = m_BoneMap.find(name);
+
+	if (it != m_BoneMap.end())
+	{
+		*pt = it->second;
+		return true;
+	}
+
+	cout << "WARNING: unable to find bone - " << name << endl;
+	return false;
+}
+
+
+
+
+/* ----------------------------------------------------------------------------
+	Summary:
 	Setup the base colour of the skeleton
 
 
@@ -810,7 +839,19 @@ void BVH::StripBVHFile(float amount)
 
 
 
+/* ============================================================================
+	Summary:
+	Linear interpolate between a and b
 
+	Paramaters:
+	[in] time		:	value between 0 - 1
+	[in] a			:	starting t3Point
+	[in] b			:	ending t3Point
+
+	Return:
+	result of interpolation
+
+============================================================================ */
 t3Point BVH::Lerp(float time, t3Point a, t3Point b)
 {
 	t3Point p0 = a * (1.0f - time);
@@ -820,12 +861,24 @@ t3Point BVH::Lerp(float time, t3Point a, t3Point b)
 	p0.y += p1.y;
 	p0.z += p1.z;
 
-
 	return p0;
 }
 
 
 
+/* ============================================================================
+	Summary:
+	Linear interpolate between a and b
+	
+	Paramaters:
+	[in] time		:	value between 0 - 1
+	[in] a			:	starting float
+	[in] b			:	ending float
+
+	Return:
+	result of interpolation
+
+============================================================================ */
 float BVH::Lerp(float time, float a, float b)
 {
 	float p0 = a * (1.0f - time);
@@ -837,16 +890,18 @@ float BVH::Lerp(float time, float a, float b)
 }
 
 
-/* ============================================================================
-Summary:
-Given the frame number, render the figure onto the screen
 
-Paramaters:
-[in] joint*		:	pointer to a specific joint to render
-[in] data*		:	pointer to starting key in animation
-[in] next*		:	pointer to next key in animation
-[in] scale		:	scale to apply
-[in] time		:	unit value between 0.0 and 1.0 to calculate key
+
+/* ============================================================================
+	Summary:
+	Given the frame number, render the figure onto the screen
+
+	Paramaters:
+	[in] joint*		:	pointer to a specific joint to render
+	[in] data*		:	pointer to starting key in animation
+	[in] next*		:	pointer to next key in animation
+	[in] scale		:	scale to apply
+	[in] time		:	unit value between 0.0 and 1.0 to calculate key
 
 
 ============================================================================ */
@@ -1009,4 +1064,17 @@ void  BVH::RenderFigureInterp(const Joint* joint, const double* data, const doub
 		RenderFigure(joint->children[i], data, scale);
 	}
 	glPopMatrix();
+}
+
+
+
+void BVH::UpdateTimers(float dTime)
+{
+	JointIndexMap::const_iterator it;
+	for (it = m_JointIndexMap.begin(); it != m_JointIndexMap.end(); it++)
+	{
+		Joint* pJoint = it->second;
+		if (pJoint && pJoint->timer > 0)
+			pJoint->timer -= dTime;
+	}
 }
