@@ -294,6 +294,10 @@ void Keyboard(unsigned char key, int x, int y)
 	{
 		AssetMgr->ToggleRawData();
 	}
+	else if (key == 't')
+	{
+		AssetMgr->ToggleTranslate();
+	}
 
 
 	if (glutGetModifiers() == GLUT_ACTIVE_SHIFT) {

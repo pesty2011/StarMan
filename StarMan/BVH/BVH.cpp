@@ -20,7 +20,10 @@ BVH::BVH()
 
 	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
 	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
-	m_bRawData = false;
+
+
+	m_bRawData = true;
+	m_bUseTranslation = true;
 }
 
 
@@ -33,8 +36,10 @@ BVH::BVH( const char * bvh_file_name )
 	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
 	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
 
-	m_bRawData = false;
 
+
+	m_bRawData = true;
+	m_bUseTranslation = true;
 }
 
 
@@ -51,16 +56,18 @@ void  BVH::Clear()
 	int jointSize = m_Joints.size();
 
 	int  i;
-	for ( i=0; i < channelSize; i++ )
-		delete  m_Channels[ i ];
 
+	for (i = 0; i < channelSize; i++ )
+		delete m_Channels[i];
 
-	for ( i=0; i < jointSize; i++ )
-		delete  m_Joints[ i ];
-
+	for (i = 0; i < jointSize; i++ )
+		delete m_Joints[i];
 
 	if ( m_pMotion != NULL )
-		delete  m_pMotion;
+		delete m_pMotion;
+
+	if (m_pAnimData != NULL)
+		delete m_pAnimData;
 
 
 	isLoaded = false;
@@ -94,10 +101,8 @@ void  BVH::Clear()
 	Parameters:
 	[in] bvh_file_name : pointer to the bvh file to load
 
-
-
 ---------------------------------------------------------------------------- */
-void  BVH::Load( const char * bvh_file_name )
+void  BVH::Load(const char * bvh_file_name )
 {
 	#define  BUFFER_LENGTH  1024*32					// 32K line buffer
 
@@ -215,6 +220,10 @@ void  BVH::Load( const char * bvh_file_name )
 			new_joint->colour[1] = 0.0f;
 			new_joint->colour[2] = 0.0f;
 
+			new_joint->baseColour[0] = 0.8f;
+			new_joint->baseColour[1] = 0.8f;
+			new_joint->baseColour[2] = 0.8f;
+
 			m_Joints.push_back(new_joint);
 
 			// check if there is a parent joint
@@ -231,7 +240,7 @@ void  BVH::Load( const char * bvh_file_name )
 
 			// add in cache working frame ...
 			m_BoneMap[new_joint->name] = t3Point(0.0f, 0.0f, 0.0f);
-			std::cout << new_joint->name << std::endl;
+//			std::cout << new_joint->name << std::endl;
 
 			continue;
 		}
@@ -377,7 +386,6 @@ bvh_error:
 
 
 
-
 /* ============================================================================
 	Summary:
 		Given the frame number, render the figure onto the screen
@@ -387,7 +395,7 @@ bvh_error:
 	[in] scale		:	scale to apply
 
 ============================================================================ */
-void  BVH::RenderFigure( int frameNum, float scale )
+void  BVH::RenderFigure(int frameNum, float scale)
 {
 	if (m_bRawData == true)
 	{
@@ -399,6 +407,34 @@ void  BVH::RenderFigure( int frameNum, float scale )
 	}
 }
 
+
+
+/* ============================================================================
+	Summary:
+	Given the frame number, render the figure onto the screen
+
+	Paramaters:
+	[in] frame_no	:	frame number to display
+	[in] scale		:	scale to apply
+	[in] time		:	time since start
+============================================================================ */
+void  BVH::RenderFigure(int frameNum, int nextFrame, float scale, float time)
+{
+	if (m_bRawData == true)
+	{
+		RenderFigureInterp(m_Joints[0], 
+			m_pMotion + frameNum * m_NumChannels,
+			m_pMotion + nextFrame * m_NumChannels,
+			scale, time);
+	}
+	else
+	{
+		RenderFigureInterp(m_Joints[0], 
+			m_pAnimData + frameNum * m_NumChannels,
+			m_pAnimData + nextFrame * m_NumChannels,
+			scale, time);
+	}
+}
 
 
 
@@ -422,16 +458,18 @@ void  BVH::RenderFigure(const Joint* joint, const double * data, float scale)
 	// ROOT ?
 	if ( joint->parent == NULL )
 	{
-
 		// This translates the root ...
 		glTranslatef(m_Pos.x, m_Pos.y, m_Pos.z);
 		glRotatef(m_Dir.y, 0.0f, 1.0f, 0.0f);
-		glTranslatef( (float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale );
+
+		if (m_bUseTranslation == true)
+			glTranslatef((float)data[0] * scale, (float)data[1] * scale, (float)data[2] * scale);
+		else
+			glTranslatef(0.0f, (float)data[1] * scale, 0.0f);
 
 		glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
 		m_HipPosition = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 		m_BoneMap[joint->name] = m_HipPosition;
-
 	}
 	else
 	{
@@ -561,15 +599,15 @@ void BVH::RenderBone(const Joint* joint, float x0, float y0, float z0, float x1,
 	else
 		glColor3f(joint->baseColour[0], joint->baseColour[1], joint->baseColour[2]);
 
-
+#if false
 	glBegin(GL_LINES);
 	glVertex3f(x0, y0, z0);
 	glVertex3f(x1, y1, z1);
 	glEnd();
-
+#endif
 
 	// draw a capsule ...
-#if 0
+#if true
 	if (quad_obj == NULL)
 	{
 		// create a new quadric primative
@@ -642,7 +680,7 @@ void BVH::RenderBone(const Joint* joint, float x0, float y0, float z0, float x1,
 	glMultMatrixd( m );
 
 	// create a cylinder to draw
-	GLdouble	radius= 0.02;		// radius of cylinder
+	GLdouble	radius= 0.05;		// radius of cylinder
 	GLint		slices = 8;			// number of slices, more means smoother
 	GLint		stack = 2;			// number of vertical slices for the cyclinder (doesn't matter really)
 
@@ -731,23 +769,24 @@ void BVH::SetBoneColour(string jointName, float time, float r, float g, float b)
 
 /* ----------------------------------------------------------------------------
 	Summary:
-	Create a 6 frames per second animation and store it 
-
+	A quick and dirty function that strips out a lot of the extra frames
+	from the BVH file and creates a new motion stream to play back.
 
 ---------------------------------------------------------------------------- */
 void BVH::StripBVHFile(float amount)
 {
+	const float amt = 10;
 	float totalTime = m_Interval * m_NumFrames;			// total time in seconds
 
 
 	if (m_NumFrames > 200)
 	{
-		int numFrames = m_NumFrames / 100;
+		int numFrames = m_NumFrames / amt;
 		int bufferSize = numFrames * m_NumChannels * 2;
 
 		m_pAnimData = new double[bufferSize];
 		m_NumAnimFrames = numFrames;
-		m_AnimInterval = m_Interval * 100;
+		m_AnimInterval = m_Interval * amt;
 
 		// loop through all of the frames
 		int frameIndex = 0;
@@ -783,4 +822,191 @@ t3Point BVH::Lerp(float time, t3Point a, t3Point b)
 
 
 	return p0;
+}
+
+
+
+float BVH::Lerp(float time, float a, float b)
+{
+	float p0 = a * (1.0f - time);
+	float p1 = b * time;
+
+	p0 += p1;
+
+	return p0;
+}
+
+
+/* ============================================================================
+Summary:
+Given the frame number, render the figure onto the screen
+
+Paramaters:
+[in] joint*		:	pointer to a specific joint to render
+[in] data*		:	pointer to starting key in animation
+[in] next*		:	pointer to next key in animation
+[in] scale		:	scale to apply
+[in] time		:	unit value between 0.0 and 1.0 to calculate key
+
+
+============================================================================ */
+void  BVH::RenderFigureInterp(const Joint* joint, const double* data, const double* next, float scale, float time)
+{
+	GLfloat modelMatrix[16];
+
+	glPushMatrix();
+
+	// ROOT ?
+	if (joint->parent == NULL)
+	{
+		// This translates the root ...
+		glTranslatef(m_Pos.x, m_Pos.y, m_Pos.z);
+		glRotatef(m_Dir.y, 0.0f, 1.0f, 0.0f);
+
+
+		if (m_bUseTranslation == true)
+		{
+			t3Point startKey = t3Point((float)data[0] * scale, 
+				(float)data[1] * scale, 
+				(float)data[2] * scale);
+
+			t3Point endKey = t3Point((float)next[0] * scale, 
+				(float)next[1] * scale, 
+				(float)next[2] * scale);
+
+			t3Point interp = Lerp(time, startKey, endKey);
+
+			glTranslatef(interp.x, interp.y, interp.z);
+		}
+		else
+		{
+			t3Point startKey = t3Point((float)data[0] * scale,
+				(float)data[1] * scale,
+				(float)data[2] * scale);
+
+			t3Point endKey = t3Point((float)next[0] * scale,
+				(float)next[1] * scale,
+				(float)next[2] * scale);
+
+			t3Point interp = Lerp(time, startKey, endKey);
+			glTranslatef(0.0f, interp.y, 0.0f);
+		}
+
+		// cache off the world coordinate of this bone ...
+		glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+		m_HipPosition = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+		m_BoneMap[joint->name] = m_HipPosition;
+	}
+	else
+	{
+		glTranslatef((float)joint->offset[0] * scale, 
+			(float)joint->offset[1] * scale, 
+			(float)joint->offset[2] * scale);
+	}
+
+
+	size_t  i;
+	for (i = 0; i < joint->channels.size(); i++)
+	{
+		Channel* channel = joint->channels[i];
+
+		if (channel->type == X_ROTATION)
+		{
+			float start = (float)data[channel->index];
+			float end = (float)data[channel->index];
+			float interp = Lerp(time, start, end);
+
+			glRotatef(interp, 1.0f, 0.0f, 0.0f);
+
+		}
+		else if (channel->type == Y_ROTATION)
+		{
+			float start = (float)data[channel->index];
+			float end = (float)data[channel->index];
+			float interp = Lerp(time, start, end);
+
+			glRotatef(interp, 0.0f, 1.0f, 0.0f);
+		}
+		else if (channel->type == Z_ROTATION)
+		{
+			float start = (float)data[channel->index];
+			float end = (float)data[channel->index];
+			float interp = Lerp(time, start, end);
+
+			glRotatef(interp, 0.0f, 0.0f, 1.0f);
+		}
+	}
+
+
+	// retrieve the modelMatrix and get translation of the joint position
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+	t3Point pt = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+	m_BoneMap[joint->name] = pt;
+
+
+
+	// if there are no children, just render the bone to the joint site
+	if (joint->children.size() == 0)
+	{
+		RenderBone(joint, 0.0f, 0.0f, 0.0f,
+			(float)joint->site[0] * scale,
+			(float)joint->site[1] * scale,
+			(float)joint->site[2] * scale);
+	}
+
+
+	// if there is only one child, render the bone to the offset of the next child
+	if (joint->children.size() == 1)
+	{
+		Joint* child = joint->children[0];
+		RenderBone(joint, 0.0f, 0.0f, 0.0f,
+			(float)child->offset[0] * scale,
+			(float)child->offset[1] * scale,
+			(float)child->offset[2] * scale);
+	}
+
+
+	if (joint->children.size() > 1)
+	{
+		float  center[3] = { 0.0f, 0.0f, 0.0f };
+
+		for (i = 0; i < joint->children.size(); i++)
+		{
+			Joint* child = joint->children[i];
+
+			center[0] += (float)child->offset[0];
+			center[1] += (float)child->offset[1];
+			center[2] += (float)child->offset[2];
+		}
+
+		center[0] /= joint->children.size() + 1;
+		center[1] /= joint->children.size() + 1;
+		center[2] /= joint->children.size() + 1;
+
+		RenderBone(joint, 0.0f, 0.0f, 0.0f,
+			center[0] * scale,
+			center[1] * scale,
+			center[2] * scale);
+
+
+
+		for (i = 0; i < joint->children.size(); i++)
+		{
+			Joint* child = joint->children[i];
+
+			RenderBone(joint, center[0] * scale,
+				center[1] * scale,
+				center[2] * scale,
+				(float)child->offset[0] * scale,
+				(float)child->offset[1] * scale,
+				(float)child->offset[2] * scale);
+		}
+	}
+
+
+	for (i = 0; i < joint->children.size(); i++)
+	{
+		RenderFigure(joint->children[i], data, scale);
+	}
+	glPopMatrix();
 }

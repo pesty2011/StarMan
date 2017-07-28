@@ -29,8 +29,8 @@ public:
 
 	void Clear();
 
-	void ToggleRawData();
-
+	void	ToggleRawData();
+	void	ToggleTranslate();
 
 	static CAssetManager* Instance();
 };

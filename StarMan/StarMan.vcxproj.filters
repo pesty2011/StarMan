@@ -60,23 +60,11 @@
     <ClCompile Include="AnimPlayer.cpp">
       <Filter>Anim</Filter>
     </ClCompile>
-    <ClCompile Include="Skeleton.cpp">
-      <Filter>Anim</Filter>
-    </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Anim</Filter>
-    </ClCompile>
     <ClCompile Include="AssetManager.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
     <ClCompile Include="Entities\EntityManager.cpp">
       <Filter>Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Anim.cpp">
-      <Filter>Anim</Filter>
-    </ClCompile>
-    <ClCompile Include="Frame.cpp">
-      <Filter>Anim</Filter>
     </ClCompile>
     <ClCompile Include="States\Karate01State.cpp">
       <Filter>States</Filter>
@@ -137,12 +125,6 @@
     <ClInclude Include="AnimPlayer.h">
       <Filter>Anim</Filter>
     </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Anim</Filter>
-    </ClInclude>
-    <ClInclude Include="Skeleton.h">
-      <Filter>Anim</Filter>
-    </ClInclude>
     <ClInclude Include="EntityNames.h">
       <Filter>Entities</Filter>
     </ClInclude>
@@ -151,12 +133,6 @@
     </ClInclude>
     <ClInclude Include="Entities\EntityManager.h">
       <Filter>Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Anim.h">
-      <Filter>Anim</Filter>
-    </ClInclude>
-    <ClInclude Include="Frame.h">
-      <Filter>Anim</Filter>
     </ClInclude>
     <ClInclude Include="EntityMessage.h">
       <Filter>Header Files</Filter>

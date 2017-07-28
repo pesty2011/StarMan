@@ -127,25 +127,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Anim.cpp" />
     <ClCompile Include="AnimPlayer.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
-    <ClCompile Include="Bone.cpp" />
     <ClCompile Include="BVH\BVH.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_MBCS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_MBCS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Entities\EntityManager.cpp" />
-    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="FSMState.cpp" />
     <ClCompile Include="FSMSystem.cpp" />
     <ClCompile Include="FSMTransition.cpp" />
     <ClCompile Include="Helpers\GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageDispatch.cpp" />
-    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="StarMan1.cpp" />
     <ClCompile Include="StarMan2.cpp" />
     <ClCompile Include="States\Karate01State.cpp" />
@@ -156,18 +152,15 @@
     <ClCompile Include="States\Karate06State.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Anim.h" />
     <ClInclude Include="AnimPlayer.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BaseEntity.h" />
-    <ClInclude Include="Bone.h" />
     <ClInclude Include="BVH\BVH.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="3Dutil.h" />
     <ClInclude Include="Entities\EntityManager.h" />
     <ClInclude Include="EntityMessage.h" />
     <ClInclude Include="EntityNames.h" />
-    <ClInclude Include="Frame.h" />
     <ClInclude Include="FSMState.h" />
     <ClInclude Include="FSMStateID.h" />
     <ClInclude Include="FSMSystem.h" />
@@ -175,7 +168,6 @@
     <ClInclude Include="Helpers\GameTimer.h" />
     <ClInclude Include="KarateStates.h" />
     <ClInclude Include="MessageDispatch.h" />
-    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="StarMan1.h" />
     <ClInclude Include="StarMan2.h" />
     <ClInclude Include="States\Karate01State.h" />

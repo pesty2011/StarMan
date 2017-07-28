@@ -17,12 +17,15 @@ protected:
 
 	int				mCurrFrame;			// current frame we are displaying
 	int				mPrevFrame;			// previous frame we displayed
+	int				mNextFrame;			// what is the next frame
 	int				mNumFrames;
 
 
 	float			mStartTime;			// starting time of the animation
 	float			mCurrTime;			// current time
 	float			mFrameTime;			// current animation time
+	float			mDeltaTime;
+
 
 	float			mInterval;			// intervals between keys
 	float			mTotalTime;			// total time of animation

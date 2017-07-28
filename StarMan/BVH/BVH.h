@@ -88,6 +88,7 @@ private:
 	JointIndexMap			m_JointIndexMap;		// map lookup of all of the joints
 
 	bool					m_bRawData;
+	bool					m_bUseTranslation;
 
 	// this represents the stripped version of the BVH 
 	// motion data.
@@ -121,6 +122,9 @@ public:
 	void			ToggleRawData() { m_bRawData ^= true; }
 	bool			IsRawData() { return m_bRawData; }
 
+	void			ToggleTrans() { m_bUseTranslation ^= true; }
+	bool			IsTrans() { return m_bUseTranslation; }
+
 
 	const string&   GetFileName() const { return file_name; }
 	const string&   GetMotionName() const { return motion_name; }
@@ -151,6 +155,7 @@ public:
 
 
 	t3Point			Lerp(float time, t3Point a, t3Point b);
+	float			Lerp(float time, float a, float b);
 	void			StripBVHFile(float amount);
 	
 	int	GetNumFrame() const 
@@ -174,7 +179,9 @@ public:
 	// Rendering methods for the BVH system
 public:
 	void			RenderFigure(int frameNum, float scale = 1.0f);
+	void			RenderFigure(int frameNum, int nextFrame, float scale, float time);
 	void			RenderFigure( const Joint* root, const double* data, float scale = 1.0f );
+	void			RenderFigureInterp(const Joint* joint, const double* pCurr, const double* pNext, float scale, float time);
 	void			RenderBones();
 	void			RenderBone(const Joint* joint, float x0, float y0, float z0, float x1, float y1, float z1 );
 

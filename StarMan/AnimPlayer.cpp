@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "BaseEntity.h"
+#include "EntityNames.h"
 #include "AnimPlayer.h"
 #include "AssetManager.h"
 #include "EntityMessage.h"
@@ -69,8 +70,11 @@ void CAnimPlayer::Play()
 	cout << "===========================================" << endl;
 
 	mFrameTime = 0.0f;
+	mDeltaTime = 0.0f;
+
 	mCurrFrame = 0;
 	mPrevFrame = 0;
+	mNextFrame = 0;
 
 	bIsPlaying = true;
 }
@@ -186,25 +190,49 @@ void CAnimPlayer::Update(float dTime)
 		mFrameTime += dTime;
 		float time = mFrameTime / mTotalTime;
 		float frame = (float)m_pMotionData->GetNumFrame() * time;
+		float interval = (float)m_pMotionData->GetInterval();
+		
+		
 		mPrevFrame = mCurrFrame;
 		mCurrFrame = (int)frame;
+		mNextFrame = mCurrFrame + 1;
 
 
 		if (bLoop)
 		{
 			mCurrFrame = mCurrFrame % m_pMotionData->GetNumFrame();
+
+			// what is the next frame to play
+			mNextFrame = mCurrFrame + 1;
+			mNextFrame = mNextFrame % m_pMotionData->GetNumFrame();
 		}
 		else if (mFrameTime >= mTotalTime)
 		{
 			mCurrFrame = m_pMotionData->GetNumFrame() - 1;
-			
+
+			// what is the next frame to play
+			mNextFrame = mCurrFrame + 1;
+			mNextFrame = mNextFrame % m_pMotionData->GetNumFrame();
+
 			// send a message that we are done doing this move ...
 			Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, m_pOwner->GetID(), m_pOwner->GetID(), CREATE_MESSAGE(MSGTYPE_PLAYBACK, MSGEVENT_ANIMPLAYBACK_DONE) , 0, NULL);
 		}
 
 
+
 		// calculate the percentage moves here if we need to blend going 
 		// into another move or not ...
+		float startTime = mCurrFrame * interval;
+		float endTime = mNextFrame * interval;
+
+		mDeltaTime = (mFrameTime - startTime) / interval;
+
+#if _DEBUG
+		if (m_pOwner->GetID() == StarMan_1)
+		{
+//			cout << "Delta: " << mDeltaTime << " From: " << mCurrFrame << " : " << mNextFrame << " Interval: " << interval << endl;
+		}
+#endif
 	}
 }
 
@@ -222,7 +250,7 @@ void CAnimPlayer::Display()
 
 		m_pMotionData->SetDir(m_pOwner->GetDir());
 		m_pMotionData->SetPos(m_pOwner->GetPos());
-		m_pMotionData->RenderFigure(mCurrFrame, 0.05f);
+		m_pMotionData->RenderFigure(mCurrFrame, mNextFrame, 0.05f, mDeltaTime);
 
 		m_pMotionData->RenderBones();
 #if false

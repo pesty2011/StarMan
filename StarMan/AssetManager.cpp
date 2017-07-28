@@ -138,3 +138,13 @@ void CAssetManager::ToggleRawData()
 		it->second->ToggleRawData();
 	}
 }
+
+void CAssetManager::ToggleTranslate()
+{
+	AssetMap::iterator	it;
+
+	for (it = assets.begin(); it != assets.end(); it++)
+	{
+		it->second->ToggleTrans();
+	}
+}
