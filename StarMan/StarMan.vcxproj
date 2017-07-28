@@ -151,6 +151,19 @@
     <ClCompile Include="States\Karate04State.cpp" />
     <ClCompile Include="States\Karate05State.cpp" />
     <ClCompile Include="States\Karate06State.cpp" />
+    <ClCompile Include="States\Karate07State.cpp" />
+    <ClCompile Include="States\Karate08State.cpp" />
+    <ClCompile Include="States\Karate09State.cpp" />
+    <ClCompile Include="States\Karate10State.cpp" />
+    <ClCompile Include="States\Karate11State.cpp" />
+    <ClCompile Include="States\Karate12State.cpp" />
+    <ClCompile Include="States\Karate13State.cpp" />
+    <ClCompile Include="States\Karate14State.cpp" />
+    <ClCompile Include="States\Karate15State.cpp" />
+    <ClCompile Include="States\Karate16State.cpp" />
+    <ClCompile Include="States\Karate17State.cpp" />
+    <ClCompile Include="States\Karate18State.cpp" />
+    <ClCompile Include="States\Karate19State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimPlayer.h" />
@@ -178,6 +191,19 @@
     <ClInclude Include="States\Karate04State.h" />
     <ClInclude Include="States\Karate05State.h" />
     <ClInclude Include="States\Karate06State.h" />
+    <ClInclude Include="States\Karate07State.h" />
+    <ClInclude Include="States\Karate08State.h" />
+    <ClInclude Include="States\Karate09State.h" />
+    <ClInclude Include="States\Karate10State.h" />
+    <ClInclude Include="States\Karate11State.h" />
+    <ClInclude Include="States\Karate12State.h" />
+    <ClInclude Include="States\Karate13State.h" />
+    <ClInclude Include="States\Karate14State.h" />
+    <ClInclude Include="States\Karate15State.h" />
+    <ClInclude Include="States\Karate16State.h" />
+    <ClInclude Include="States\Karate17State.h" />
+    <ClInclude Include="States\Karate18State.h" />
+    <ClInclude Include="States\Karate19State.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

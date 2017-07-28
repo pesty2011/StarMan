@@ -2,7 +2,7 @@
 #define __CAMERA_H__
 
 
-#define M_PI		3.1415f
+#define M_PI		3.141592654f
 #define M_PI_2		(M_PI/2.0f)
 
 

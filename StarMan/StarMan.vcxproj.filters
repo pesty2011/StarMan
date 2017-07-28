@@ -96,6 +96,45 @@
     <ClCompile Include="ColliderSystem.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="States\Karate07State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate08State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate09State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate10State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate11State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate12State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate13State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate14State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate15State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate16State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate17State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate18State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\Karate19State.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3Dutil.h">
@@ -172,6 +211,45 @@
     </ClInclude>
     <ClInclude Include="ColliderSystem.h">
       <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate07State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate08State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate09State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate10State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate11State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate12State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate13State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate14State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate15State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate16State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate17State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate18State.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\Karate19State.h">
+      <Filter>States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

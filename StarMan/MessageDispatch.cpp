@@ -52,7 +52,7 @@ void CMessageDispatch::DispatchEntityMessage(float  delay,
 	int    sender,
 	int    receiver,
 	int    msg,
-	int		data,
+	int	   data,
 	void*  ExtraInfo)
 {
 	//get pointers to the sender and receiver
@@ -76,8 +76,7 @@ void CMessageDispatch::DispatchEntityMessage(float  delay,
 	//if there is no delay, route telegram immediately                       
 	if (delay <= 0.0f)
 	{
-		cout << "Message dispatched at time: " << CurrentTime
-			<< " by " << pSender->GetName() << " for " << pReceiver->GetName()
+		cout << "Message Sent "	<< " by " << pSender->GetName() << " for " << pReceiver->GetName()
 			<< "  Msg is " << msg << endl;
 
 		//send the telegram to the recipient

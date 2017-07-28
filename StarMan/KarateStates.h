@@ -6,6 +6,19 @@
 #include "States\Karate04State.h"
 #include "States\Karate05State.h"
 #include "States\Karate06State.h"
+#include "States\Karate07State.h"
+#include "States\Karate08State.h"
+#include "States\Karate09State.h"
+#include "States\Karate10State.h"
+#include "States\Karate11State.h"
+#include "States\Karate12State.h"
+#include "States\Karate13State.h"
+#include "States\Karate14State.h"
+#include "States\Karate15State.h"
+#include "States\Karate16State.h"
+#include "States\Karate17State.h"
+#include "States\Karate18State.h"
+#include "States\Karate19State.h"
 
 
 /* ----------------------------------------------------------------------------
@@ -73,7 +86,7 @@ static const char* StateIDDesc[] =
 	{ "Inner Guard" },
 	{ "Lower Guard" },
 	{ "Chop Guard" },
-	{ "Kata Variation" },
+	{ "Kata Variation" }
 };
 
 

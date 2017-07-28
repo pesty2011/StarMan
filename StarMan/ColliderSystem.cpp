@@ -230,7 +230,7 @@ void CColliderSystem::Update()
 #endif
 
 
-						if (result.d < 0.2f)
+						if (result.d < 0.5f)
 						{
 #if _DEBUG && 0
 							// use the message dispatcher to signal a collision to the enity 

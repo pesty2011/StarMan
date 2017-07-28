@@ -16,6 +16,8 @@
 #include "EntityNames.h"
 #include "AssetManager.h"
 #include "ColliderSystem.h"
+#include "MessageDispatch.h"
+#include "EntityMessage.h"
 
 #include "StarMan1.h"
 #include "StarMan2.h"
@@ -37,10 +39,7 @@ void MouseMotion(int x, int y);
 void Mouse(int button, int state, int x, int y);
 void Timer(int value);
 void Idle();
-void Update(int value);
-
-
-
+//void Update(int value);
 void DrawGrid();
 void Grid();
 
@@ -155,7 +154,7 @@ int main(int argc, char **argv)
 	glutIdleFunc(Idle);
 
 	glutTimerFunc(1, Timer, 0);
-	glutTimerFunc(1, Update, 1);
+//	glutTimerFunc(1, Update, 1);
 	glutMainLoop();
 
 
@@ -257,7 +256,7 @@ void Display(void) {
 
 //	glutWireTeapot(0.5);
 	glColor3f(0, 1.0f, 0.8f);
-	glutWireCube(1.0f);
+//	glutWireCube(1.0f);
 
 	// display the entities on screen
 	EntityMgr->Display();
@@ -300,23 +299,37 @@ void Keyboard(unsigned char key, int x, int y)
 			glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 		}
 	}
-	else if (key == 'p')
+	else if (key == 'P')
 	{
 		// trigger playing an animation ...
 		CBaseEntity* entity = EntityMgr->FindEntity(StarMan_1);
 		if (entity != NULL)
 		{
-//			entity->Play("karate-02");
 			bStartGame = true;
 		}
 	}
 	else if (key == 'r')
 	{
-		AssetMgr->ToggleRawData();
+//		AssetMgr->ToggleRawData();
 	}
 	else if (key == 't')
 	{
 		AssetMgr->ToggleTranslate();
+	}
+	else if (key == 'k')
+	{
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_1, StarMan_1, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_KICK_SEQUENCES), 0, NULL);
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_2, StarMan_2, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_KICK_SEQUENCES), 0, NULL);
+	}
+	else if (key == 'g')
+	{
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_1, StarMan_1, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_GUARD_SEQUENCES), 0, NULL);
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_2, StarMan_2, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_GUARD_SEQUENCES), 0, NULL);
+	}
+	else if (key == 'p')
+	{
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_1, StarMan_1, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_PUNCH_SEQUENCES), 0, NULL);
+		Dispatch->DispatchEntityMessage(SEND_MESSAGE_IMMEDIATELY, StarMan_2, StarMan_2, CREATE_MESSAGE(MSGTYPE_TRANSITION, MSGEVENT_PUNCH_SEQUENCES), 0, NULL);
 	}
 
 
@@ -339,7 +352,7 @@ void KeyboardUp(unsigned char key, int x, int y)
 
 
 
-
+#if false
 void Update(int value)
 {
 #if false
@@ -352,11 +365,12 @@ void Update(int value)
 #endif
 	glutTimerFunc(1, Update, 1);
 }
-
+#endif
 
 
 void Timer(int value)
 {
+	// use this to adjust the camera mode
 	if (g_fps_mode) {
 		if (g_key['w'] || g_key['W']) {
 			g_camera.Move(g_translation_speed);
@@ -382,7 +396,6 @@ void Timer(int value)
 			g_camera.Reset();
 		}
 	}
-
 	glutTimerFunc(1, Timer, 0);
 }
 
@@ -399,10 +412,7 @@ void Idle()
 	{
 		UpdateStarMan(dTime);
 	}
-	
 	ColliderSys->Update();
-
-
 	Display();
 }
 

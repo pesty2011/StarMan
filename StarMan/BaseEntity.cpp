@@ -122,16 +122,16 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 	switch (type)
 	{
 	case MSGTYPE_EVENT:
-		cout << "MSGTYPE_EVENT received: " << evt << endl;
 		break;
 
 	case MSGTYPE_TRANSITION:
-		cout << "MSGTYPE_TRANSITION received: " << evt << endl;
+		m_pFSM->RaiseTransition(evt);
 		break;
 
 	case MSGTYPE_PLAYBACK:
-		cout << "MSGTYPE_PLAYBACK received: " << evt << endl;
-		m_pFSM->RaiseTransition(evt);
+		// done due to the states rely on animation events to 
+		// perform transitions
+		m_pFSM->RaiseTransition(evt);			
 		break;
 	
 	case MSGTYPE_COLLISION:
