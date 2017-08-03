@@ -14,7 +14,6 @@ CBaseEntity::CBaseEntity(int id)
 	mName = GetNameOfEntity(id);
 
 	mParent = NULL;					// No parent class at this point
-	mType = EN_Unknown;				// unknown type;
 
 	m_pAnim = new CAnimPlayer(this);
 	m_pFSM = new FSMSystem(this);
@@ -27,7 +26,6 @@ CBaseEntity::CBaseEntity()
 	mName = "Unknown";
 
 	mParent = NULL;					// No parent class at this point
-	mType = EN_Unknown;				// unknown type;
 	m_pTarget = NULL;
 
 	m_pAnim = new CAnimPlayer(this);
@@ -52,31 +50,6 @@ string CBaseEntity::GetName()
 void CBaseEntity::SetName(string name)
 {
 	mName = name;
-}
-
-
-
-int CBaseEntity::NumChildren()
-{
-	return 0;
-}
-
-
-CBaseEntity* CBaseEntity::GetChild(int i)
-{
-	return NULL;
-}
-
-
-void CBaseEntity::InsertChild(CBaseEntity* child)
-{
-
-}
-
-
-
-void CBaseEntity::DeleteChild(CBaseEntity* child)
-{
 }
 
 

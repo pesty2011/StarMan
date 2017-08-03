@@ -203,15 +203,14 @@ void CAnimPlayer::Update(float dTime)
 		float frame = (float)m_pMotionData->GetNumFrame() * time;
 		float interval = (float)m_pMotionData->GetInterval();
 		
-		
 		mPrevFrame = mCurrFrame;
 		mCurrFrame = (int)frame;
 		mNextFrame = mCurrFrame + 1;
 
-
 		if (bLoop)
 		{
 			mCurrFrame = mCurrFrame % m_pMotionData->GetNumFrame();
+
 
 			// what is the next frame to play
 			mNextFrame = mCurrFrame + 1;
@@ -220,6 +219,7 @@ void CAnimPlayer::Update(float dTime)
 		else if (mFrameTime >= mTotalTime)
 		{
 			mCurrFrame = m_pMotionData->GetNumFrame() - 1;
+
 
 			// what is the next frame to play
 			mNextFrame = mCurrFrame + 1;
@@ -230,19 +230,23 @@ void CAnimPlayer::Update(float dTime)
 		}
 
 
+
 		// calculate the percentage moves here if we need to blend going 
 		// into another move or not ...
 		float startTime = mCurrFrame * interval;
 		float endTime = mNextFrame * interval;
 		mDeltaTime = (mFrameTime - startTime) / interval;
 
+
+
 #if _DEBUG
-		if (m_pOwner->GetID() == StarMan_1)
-		{
+//		if (m_pOwner->GetID() == StarMan_1)
+//		{
 //			cout << "Delta: " << mDeltaTime << " From: " << mCurrFrame << " : " << mNextFrame << " Interval: " << interval << endl;
-		}
+//		}
 #endif
 	}
+
 
 
 	// update the animation timers, just for visually changing the bone colours.
@@ -269,8 +273,6 @@ void CAnimPlayer::Display()
 		m_pMotionData->RenderFigure(mCurrFrame, mNextFrame, 0.05f, mDeltaTime);
 
 		m_pMotionData->RenderBones();
-
-
 
 #if false
 		glColor3f(1.0f, 0.0f, 0.0f);

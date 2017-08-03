@@ -143,6 +143,7 @@
     <ClCompile Include="Helpers\GameTimer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageDispatch.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="StarMan1.cpp" />
     <ClCompile Include="StarMan2.cpp" />
     <ClCompile Include="States\Karate01State.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="States\Karate17State.cpp" />
     <ClCompile Include="States\Karate18State.cpp" />
     <ClCompile Include="States\Karate19State.cpp" />
+    <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimPlayer.h" />
@@ -183,6 +185,7 @@
     <ClInclude Include="Helpers\GameTimer.h" />
     <ClInclude Include="KarateStates.h" />
     <ClInclude Include="MessageDispatch.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="StarMan1.h" />
     <ClInclude Include="StarMan2.h" />
     <ClInclude Include="States\Karate01State.h" />
@@ -204,6 +207,7 @@
     <ClInclude Include="States\Karate17State.h" />
     <ClInclude Include="States\Karate18State.h" />
     <ClInclude Include="States\Karate19State.h" />
+    <ClInclude Include="Subject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

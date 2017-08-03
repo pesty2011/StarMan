@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "3Dutil.h"
+#include "glm\vec3.hpp"
 
 // short-cut to get the Collider System class
 #define ColliderSys	CColliderSystem::Instance()
@@ -20,9 +21,29 @@ typedef struct __ResultDistance__
 	float*	pA;
 	float*	pB;
 	float	d;
-}Result_distance;
+}tClosestLineResult;
 
 
+
+typedef struct __BonePosDef__
+{
+	glm::vec3		a;
+	glm::vec3		b;
+
+	__BonePosDef__(glm::vec3 i0, glm::vec3 i1)
+	{
+		a = i0;
+		b = i1;
+	}
+} tBonePosDef;
+
+
+typedef struct __Result__
+{
+	glm::vec3	p0;
+	glm::vec3	p1;
+	float		length;
+} tClosestLine;
 
 /* ----------------------------------------------------------------------------
 	Summary:
@@ -61,13 +82,15 @@ private:
 	typedef std::vector<BONE_SEGMENT*> ColliderList;
 
 public:
-	float	Determinate3(float* a, float* v1, float* v2);
-	float*	cross3(float* v1, float* v2, float* output);
-	float	dot3(float* v1, float* v2);
-	float	norma3(float* v1);
-	float*	multiplica3(float* v1, float v, float* v2);
-	float*	soma3(float* v1, float* v2, int sinal, float* v);
+	float		Determinate3(float* a, float* v1, float* v2);
+	float*		cross3(float* v1, float* v2, float* output);
+	float		dot3(float* v1, float* v2);
+	float		norma3(float* v1);
+	float*		multiplica3(float* v1, float v, float* v2);
+	float*		soma3(float* v1, float* v2, int sinal, float* v);
 	
+	float		Determinate3(const glm::vec3& a, const glm::vec3& v1, const glm::vec3& v2);
+
 	void closestDistanceBetweenLines(float* a0, float* a1, 
 										float* b0, float* b1, 
 										int clampAll, 
@@ -75,8 +98,16 @@ public:
 										int clampA1, 
 										int clampB0, 
 										int clampB1, 
-										Result_distance* rd);
+										tClosestLineResult* rd);
 
+	void closestDistanceBetweenLines(const glm::vec3& a0, const glm::vec3& a1,
+										const glm::vec3& b0, const glm::vec3& b1,
+										int clampAll,
+										int clampA0,
+										int clampA1,
+										int clampB0,
+										int clampB1,
+		tClosestLine* rd);
 
 public:
 	CColliderSystem();

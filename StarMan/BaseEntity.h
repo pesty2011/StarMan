@@ -6,16 +6,9 @@ using namespace std;
 #include "AnimPlayer.h"
 #include "EntityMessage.h"
 
-//class CAnimPlayer;
 class FSMSystem;
 
 
-
-enum EntityTypes
-{
-	EN_Unknown,
-	EN_Actor,
-};
 
 
 
@@ -48,13 +41,6 @@ public:
 	CBaseEntity*			mParent;		// animation base object parent
 	CAnimPlayer*			m_pAnim;		// the animation player which updates animation
 	FSMSystem*				m_pFSM;			// animation state machine
-
-	EntityTypes				mType;
-
-	virtual CBaseEntity*	GetChild(int i);
-	virtual void			InsertChild(CBaseEntity* child);
-	virtual void			DeleteChild(CBaseEntity* child);
-	virtual int				NumChildren();
 
 	string					GetName();
 	void					SetName(string name);
