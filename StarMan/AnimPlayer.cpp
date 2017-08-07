@@ -134,7 +134,7 @@ void CAnimPlayer::Pause()
 
 
 
-bool CAnimPlayer::GetBonePos(std::string name, t3Point* pt)
+bool CAnimPlayer::GetBonePos(std::string name, glm::vec3* pt)
 {
 	if (m_pMotionData)
 	{
@@ -158,7 +158,7 @@ void CAnimPlayer::SetBVH(BVH* data)
 		mCurrFrame = 0;
 		mPrevFrame = 0;
 
-		t3Point colour = m_pOwner->GetColor();
+		glm::vec3 colour = m_pOwner->GetColor();
 		data->SetBonesBaseColour(colour.x, colour.y, colour.z);
 	}
 }
@@ -177,7 +177,7 @@ void CAnimPlayer::SetBVH(string motionName)
 		mCurrFrame = 0;
 		mPrevFrame = 0;
 
-		t3Point colour = m_pOwner->GetColor();
+		glm::vec3 colour = m_pOwner->GetColor();
 		m_pMotionData->SetBonesBaseColour(colour.x, colour.y, colour.z);
 	}
 }
@@ -264,9 +264,9 @@ void CAnimPlayer::Display()
 {
 	if (m_pMotionData)
 	{
-		t3Point pos = m_pOwner->GetPos();
-		t3Point colour = m_pOwner->GetColor();
-		glColor3f(colour.v[0], colour.v[1], colour.v[2]);
+		glm::vec3 pos = m_pOwner->GetPos();
+		glm::vec3 colour = m_pOwner->GetColor();
+		glColor3f(colour.x, colour.y, colour.z);
 
 		m_pMotionData->SetDir(m_pOwner->GetDir());
 		m_pMotionData->SetPos(m_pOwner->GetPos());

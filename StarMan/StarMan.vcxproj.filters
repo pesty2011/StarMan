@@ -141,6 +141,18 @@
     <ClCompile Include="Observer.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Anim.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimFrame.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="Joint.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Anim</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3Dutil.h">
@@ -262,6 +274,18 @@
     </ClInclude>
     <ClInclude Include="Observer.h">
       <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Anim.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimFrame.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="Joint.h">
+      <Filter>Anim</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Anim</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

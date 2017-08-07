@@ -22,6 +22,8 @@
 
 
 #include "..\3Dutil.h"
+#include "..\glm\vec3.hpp"
+
 
 using namespace  std;
 
@@ -67,7 +69,7 @@ public:
 
 
 private:
-	typedef std::map<string, t3Point> BoneMap;
+	typedef std::map<string, glm::vec3> BoneMap;
 	typedef std::map<string, Joint*> JointIndexMap;
 	typedef std::vector<Joint*>  JointVector;
 	typedef std::vector<Channel*> ChannelVector;
@@ -101,9 +103,9 @@ private:
 
 
 
-	t3Point					m_Pos;
-	t3Point					m_Dir;
-	t3Point					m_HipPosition;
+	glm::vec3				m_Pos;
+	glm::vec3				m_Dir;
+	glm::vec3				m_HipPosition;
 	BoneMap					m_BoneMap;
 
 
@@ -154,7 +156,7 @@ public:
 	void			SetBoneColour(string boneName, float time, float r, float g, float b);
 
 
-	t3Point			Lerp(float time, t3Point a, t3Point b);
+	glm::vec3		Lerp(float time, glm::vec3 a, glm::vec3 b);
 	float			Lerp(float time, float a, float b);
 	void			StripBVHFile(float amount);
 	
@@ -185,10 +187,10 @@ public:
 	void			RenderBones();
 	void			RenderBone(const Joint* joint, float x0, float y0, float z0, float x1, float y1, float z1 );
 
-	void			SetDir(t3Point facing) { m_Dir = facing; }
-	void			SetPos(t3Point pos) { m_Pos = pos; }
+	inline void		SetDir(glm::vec3 facing) { m_Dir = facing; }
+	inline void		SetPos(glm::vec3 pos) { m_Pos = pos; }
 
-	bool			GetBonePos(string name, t3Point* pt);
+	bool			GetBonePos(string name, glm::vec3* pt);
 
 	void			UpdateTimers(float dTime);
 };

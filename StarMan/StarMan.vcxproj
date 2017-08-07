@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Anim.cpp" />
+    <ClCompile Include="AnimFrame.cpp" />
     <ClCompile Include="AnimPlayer.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BaseEntity.cpp" />
@@ -141,9 +143,11 @@
     <ClCompile Include="FSMSystem.cpp" />
     <ClCompile Include="FSMTransition.cpp" />
     <ClCompile Include="Helpers\GameTimer.cpp" />
+    <ClCompile Include="Joint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MessageDispatch.cpp" />
     <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="StarMan1.cpp" />
     <ClCompile Include="StarMan2.cpp" />
     <ClCompile Include="States\Karate01State.cpp" />
@@ -168,6 +172,8 @@
     <ClCompile Include="Subject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Anim.h" />
+    <ClInclude Include="AnimFrame.h" />
     <ClInclude Include="AnimPlayer.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BaseEntity.h" />
@@ -183,9 +189,11 @@
     <ClInclude Include="FSMSystem.h" />
     <ClInclude Include="FSMTransition.h" />
     <ClInclude Include="Helpers\GameTimer.h" />
+    <ClInclude Include="Joint.h" />
     <ClInclude Include="KarateStates.h" />
     <ClInclude Include="MessageDispatch.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="StarMan1.h" />
     <ClInclude Include="StarMan2.h" />
     <ClInclude Include="States\Karate01State.h" />

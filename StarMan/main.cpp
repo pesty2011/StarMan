@@ -93,12 +93,6 @@ void InitStarMan()
 
 	entity = new CStarMan2(StarMan_2);
 	EntityMgr->AddEntity(entity);
-
-
-	// hard code in some targets for each of the 2 guys
-	EntityMgr->FindEntity(StarMan_1)->SetTarget(EntityMgr->FindEntity(StarMan_2));
-	EntityMgr->FindEntity(StarMan_2)->SetTarget(EntityMgr->FindEntity(StarMan_1));
-
 }
 
 

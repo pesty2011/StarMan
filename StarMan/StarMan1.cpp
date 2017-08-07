@@ -25,9 +25,9 @@ void CStarMan1::Init()
 {
 	FSMState*	state;
 
-	mPosition = t3Point(1.5f, 0.0f, 0.0f);
-	mColour = t3Point(0.0f, 1.0f, 0.5f);
-	mDir = t3Point(0.0f, -90.0f, 0.0f);
+	mPosition = glm::vec3(1.5f, 0.0f, 0.0f);
+	mColour = glm::vec3(0.0f, 1.0f, 0.5f);
+	mDir = glm::vec3(0.0f, -90.0f, 0.0f);
 
 	// some kicks
 	state = new CKarate01State(this);

@@ -13,30 +13,34 @@ CBaseEntity::CBaseEntity(int id)
 	mID = id;
 	mName = GetNameOfEntity(id);
 
-	mParent = NULL;					// No parent class at this point
+	mParent = NULL;							// No parent class at this point
 
-	m_pAnim = new CAnimPlayer(this);
-	m_pFSM = new FSMSystem(this);
-
-	m_pTarget = NULL;
+	m_pAnim = new CAnimPlayer(this);		// the animation component
+	m_pFSM = new FSMSystem(this);			// the animation state-machine component
 }
 
 CBaseEntity::CBaseEntity()
 {
 	mName = "Unknown";
 
-	mParent = NULL;					// No parent class at this point
-	m_pTarget = NULL;
+	mParent = NULL;							// No parent class at this point
 
 	m_pAnim = new CAnimPlayer(this);
 	m_pFSM = new FSMSystem(this);
-
 }
 
 
 
 CBaseEntity::~CBaseEntity()
 {
+	if (m_pAnim)
+		delete m_pAnim;
+
+	if (m_pFSM)
+		delete m_pFSM;
+
+	m_pAnim = NULL;
+	m_pFSM = NULL;
 }
 
 
@@ -89,9 +93,6 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 	int type = MSG_MASK_TYPE(msg.Msg);
 	int evt = MSG_MASK_EVENT(msg.Msg);
 
-
-
-
 	switch (type)
 	{
 	case MSGTYPE_EVENT:
@@ -127,7 +128,7 @@ bool CBaseEntity::OnHandleMessage(const EntityMessage& msg)
 
 
 
-bool CBaseEntity::GetBonePos(std::string name, t3Point* pt)
+bool CBaseEntity::GetBonePos(std::string name, glm::vec3* pt)
 {
 	if (m_pAnim)
 	{
@@ -135,3 +136,4 @@ bool CBaseEntity::GetBonePos(std::string name, t3Point* pt)
 	}
 	return false;
 }
+

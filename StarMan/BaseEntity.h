@@ -5,12 +5,9 @@ using namespace std;
 
 #include "AnimPlayer.h"
 #include "EntityMessage.h"
+#include "glm\vec3.hpp"
 
 class FSMSystem;
-
-
-
-
 
 class CBaseEntity
 {
@@ -29,12 +26,9 @@ public:
 	CBaseEntity();
 	~CBaseEntity();
 
-	t3Point					mColour;		// colour of the entity
-	t3Point					mPosition;		// current world position
-	t3Point					mDir;			// facing direction 
-
-
-	CBaseEntity*			m_pTarget;		// who is my facing target
+	glm::vec3				mColour;		// colour of the entity
+	glm::vec3				mPosition;		// current world position
+	glm::vec3				mDir;			// facing direction 
 
 	string					mName;			// name of animation base object
 
@@ -52,19 +46,16 @@ public:
 	virtual void			Display();
 
 
-	t3Point					GetPos() { return mPosition; }
-	t3Point					GetColor() { return mColour; }
-	t3Point					GetDir() { return mDir; }
-
-	void					SetTarget(CBaseEntity* entity) { m_pTarget = entity; }
-	CBaseEntity*			GetTarget() { return m_pTarget; }
+	glm::vec3				GetPos() { return mPosition; }
+	glm::vec3				GetColor() { return mColour; }
+	glm::vec3				GetDir() { return mDir; }
 
 	virtual bool			OnHandleMessage(const EntityMessage& msg);
 
 
 	// Collider system stuff
 public:
-	bool					GetBonePos(string name, t3Point* pt);
+	bool					GetBonePos(string name, glm::vec3* pt);
 
 };
 

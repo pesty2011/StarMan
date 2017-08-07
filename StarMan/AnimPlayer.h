@@ -56,7 +56,7 @@ public:
 	void Update(float dTime);
 	void Display();
 
-	bool GetBonePos(std::string name, t3Point* pt);
+	bool GetBonePos(std::string name, glm::vec3* pt);
 	void SetBoneColour(string boneName, float time, float r, float g, float b);
 
 };

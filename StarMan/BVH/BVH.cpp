@@ -9,6 +9,9 @@
 #include <math.h>
 #include <iostream>
 #include <GL/glut.h>
+#include "..\glm\vec3.hpp"
+
+
 
 #include "BVH.h"
 
@@ -18,8 +21,8 @@ BVH::BVH()
 	m_pMotion = NULL;
 	Clear();
 
-	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
-	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
+	m_Pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_Dir = glm::vec3(0.0f, 0.0f, 0.0f);
 
 
 	m_bRawData = true;
@@ -33,8 +36,8 @@ BVH::BVH(const char * bvh_file_name)
 	Clear();
 	Load(bvh_file_name);
 
-	m_Pos = t3Point(0.0f, 0.0f, 0.0f);
-	m_Dir = t3Point(0.0f, 0.0f, 0.0f);
+	m_Pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_Dir = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	m_bRawData = true;
 	m_bUseTranslation = true;
@@ -238,7 +241,7 @@ void  BVH::Load(const char * bvh_file_name )
 			m_JointIndexMap[ new_joint->name ] = new_joint;
 
 			// add in cache working frame ...
-			m_BoneMap[new_joint->name] = t3Point(0.0f, 0.0f, 0.0f);
+			m_BoneMap[new_joint->name] = glm::vec3(0.0f, 0.0f, 0.0f);
 			continue;
 		}
 
@@ -465,7 +468,7 @@ void  BVH::RenderFigure(const Joint* joint, const double * data, float scale)
 			glTranslatef(0.0f, (float)data[1] * scale, 0.0f);
 
 		glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
-		m_HipPosition = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+		m_HipPosition = glm::vec3(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 		m_BoneMap[joint->name] = m_HipPosition;
 	}
 	else
@@ -490,7 +493,7 @@ void  BVH::RenderFigure(const Joint* joint, const double * data, float scale)
 
 	// retrieve the modelMatrix and get translation of the joint position
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
-	t3Point pt = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+	glm::vec3 pt = glm::vec3(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 	m_BoneMap[joint->name] = pt;
 
 
@@ -697,7 +700,7 @@ void BVH::RenderBones()
 	BoneMap::iterator it;
 	for (it = m_BoneMap.begin(); it != m_BoneMap.end(); it++)
 	{
-		t3Point pt = it->second;
+		glm::vec3 pt = it->second;
 		
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glPushMatrix();
@@ -738,13 +741,16 @@ void BVH::RenderBones()
 	false	:	bone doesn't exist.
 
 ---------------------------------------------------------------------------- */
-bool BVH::GetBonePos(string name, t3Point* pt)
+bool BVH::GetBonePos(string name, glm::vec3* pt)
 {
 	BoneMap::const_iterator it = m_BoneMap.find(name);
 
 	if (it != m_BoneMap.end())
 	{
-		*pt = it->second;
+		pt->x = it->second.x;
+		pt->y = it->second.y;
+		pt->z = it->second.z;
+		
 		return true;
 	}
 
@@ -852,10 +858,10 @@ void BVH::StripBVHFile(float amount)
 	result of interpolation
 
 ============================================================================ */
-t3Point BVH::Lerp(float time, t3Point a, t3Point b)
+glm::vec3 BVH::Lerp(float time, glm::vec3 a, glm::vec3 b)
 {
-	t3Point p0 = a * (1.0f - time);
-	t3Point p1 = b * time;
+	glm::vec3 p0 = a * (1.0f - time);
+	glm::vec3 p1 = b * time;
 
 	p0.x += p1.x;
 	p0.y += p1.y;
@@ -921,35 +927,35 @@ void  BVH::RenderFigureInterp(const Joint* joint, const double* data, const doub
 
 		if (m_bUseTranslation == true)
 		{
-			t3Point startKey = t3Point((float)data[0] * scale, 
+			glm::vec3 startKey = glm::vec3((float)data[0] * scale,
 				(float)data[1] * scale, 
 				(float)data[2] * scale);
 
-			t3Point endKey = t3Point((float)next[0] * scale, 
+			glm::vec3 endKey = glm::vec3((float)next[0] * scale,
 				(float)next[1] * scale, 
 				(float)next[2] * scale);
 
-			t3Point interp = Lerp(time, startKey, endKey);
+			glm::vec3 interp = Lerp(time, startKey, endKey);
 
 			glTranslatef(interp.x, interp.y, interp.z);
 		}
 		else
 		{
-			t3Point startKey = t3Point((float)data[0] * scale,
+			glm::vec3 startKey = glm::vec3((float)data[0] * scale,
 				(float)data[1] * scale,
 				(float)data[2] * scale);
 
-			t3Point endKey = t3Point((float)next[0] * scale,
+			glm::vec3 endKey = glm::vec3((float)next[0] * scale,
 				(float)next[1] * scale,
 				(float)next[2] * scale);
 
-			t3Point interp = Lerp(time, startKey, endKey);
+			glm::vec3 interp = Lerp(time, startKey, endKey);
 			glTranslatef(0.0f, interp.y, 0.0f);
 		}
 
 		// cache off the world coordinate of this bone ...
 		glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
-		m_HipPosition = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+		m_HipPosition = glm::vec3(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 		m_BoneMap[joint->name] = m_HipPosition;
 	}
 	else
@@ -995,7 +1001,7 @@ void  BVH::RenderFigureInterp(const Joint* joint, const double* data, const doub
 
 	// retrieve the modelMatrix and get translation of the joint position
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
-	t3Point pt = t3Point(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
+	glm::vec3 pt = glm::vec3(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 	m_BoneMap[joint->name] = pt;
 
 
