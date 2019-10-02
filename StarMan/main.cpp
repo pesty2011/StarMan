@@ -163,50 +163,27 @@ int main(int argc, char **argv)
 void LoadBVH()
 {
 	// load up the assets for the demo ...
-//	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\ChaCha001.bvh");
+//	AssetMgr->AddMotion("ChaCha001.bvh");
 
-#if _DEBUG
-	// karate moves
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-01.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-02.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-03.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-04.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-05.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-06.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-07.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-08.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-09.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-10.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-11.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-12.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-13.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-14.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-15.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-16.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-17.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-18.bvh");
-	AssetMgr->AddMotion("C:\\Users\\Rob\\Desktop\\bvh\\karate-19.bvh");
-#else
-	AssetMgr->AddMotion(".\\bvh\\karate-01.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-02.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-03.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-04.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-05.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-06.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-07.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-08.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-09.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-10.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-11.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-12.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-13.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-14.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-15.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-16.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-17.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-18.bvh");
-	AssetMgr->AddMotion(".\\bvh\\karate-19.bvh");
-#endif
+	AssetMgr->AddMotion("karate-01.bvh");
+	AssetMgr->AddMotion("karate-02.bvh");
+	AssetMgr->AddMotion("karate-03.bvh");
+	AssetMgr->AddMotion("karate-04.bvh");
+	AssetMgr->AddMotion("karate-05.bvh");
+	AssetMgr->AddMotion("karate-06.bvh");
+	AssetMgr->AddMotion("karate-07.bvh");
+	AssetMgr->AddMotion("karate-08.bvh");
+	AssetMgr->AddMotion("karate-09.bvh");
+	AssetMgr->AddMotion("karate-10.bvh");
+	AssetMgr->AddMotion("karate-11.bvh");
+	AssetMgr->AddMotion("karate-12.bvh");
+	AssetMgr->AddMotion("karate-13.bvh");
+	AssetMgr->AddMotion("karate-14.bvh");
+	AssetMgr->AddMotion("karate-15.bvh");
+	AssetMgr->AddMotion("karate-16.bvh");
+	AssetMgr->AddMotion("karate-17.bvh");
+	AssetMgr->AddMotion("karate-18.bvh");
+	AssetMgr->AddMotion("karate-19.bvh");
 }
 
 

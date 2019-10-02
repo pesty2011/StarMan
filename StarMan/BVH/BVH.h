@@ -27,6 +27,8 @@
 
 using namespace  std;
 
+#define  BUFFER_LENGTH  1024*32					// 32K line buffer
+
 
 class  BVH
 {
@@ -132,9 +134,9 @@ public:
 	const string&   GetMotionName() const { return motion_name; }
 
 	
-	const int       GetNumJoint() const { return  m_Joints.size(); }
+	const int       GetNumJoint() const { return  static_cast<const int>(m_Joints.size()); }
 	const Joint*    GetJoint( int no ) const { return  m_Joints[no]; }
-	const int       GetNumChannel() const { return  m_Channels.size(); }
+	const int       GetNumChannel() const { return  static_cast<const int>(m_Channels.size()); }
 	const Channel*  GetChannel( int no ) const { return  m_Channels[no]; }
 
 
@@ -193,6 +195,9 @@ public:
 	bool			GetBonePos(string name, glm::vec3* pt);
 
 	void			UpdateTimers(float dTime);
+
+private:
+		char				line[BUFFER_LENGTH];
 };
 
 

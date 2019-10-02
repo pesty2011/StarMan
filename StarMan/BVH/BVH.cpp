@@ -11,8 +11,6 @@
 #include <GL/glut.h>
 #include "..\glm\vec3.hpp"
 
-
-
 #include "BVH.h"
 
 
@@ -53,10 +51,10 @@ BVH::~BVH()
 
 void  BVH::Clear()
 {
-	int channelSize = m_Channels.size();
-	int jointSize = m_Joints.size();
+	unsigned int channelSize = static_cast<int>(m_Channels.size());
+	unsigned int jointSize = static_cast<int>(m_Joints.size());
 
-	int  i;
+	unsigned int  i;
 
 	for (i = 0; i < channelSize; i++)
 		delete m_Channels[i];
@@ -106,10 +104,8 @@ void  BVH::Clear()
 ---------------------------------------------------------------------------- */
 void  BVH::Load(const char * bvh_file_name )
 {
-	#define  BUFFER_LENGTH  1024*32					// 32K line buffer
 
 	ifstream			file;
-	char				line[ BUFFER_LENGTH ];
 	char*				token;
 	char				separator[] = " :,\t";
 	vector<Joint*>		joint_stack;
@@ -153,10 +149,14 @@ void  BVH::Load(const char * bvh_file_name )
 	motion_name.assign( mn_first, mn_last );
 
 
+	char path[256];
+	GetCurrentDirectoryA(sizeof(path), path);
+	std::string workingDirectory(path);
+	workingDirectory = workingDirectory + std::string("\\..\\mocap\\") + std::string(bvh_file_name);
 
 
 	//### open the file to parse it ...
-	file.open( bvh_file_name, ios::in );
+	file.open( workingDirectory.c_str(), ios::in );
 	if (file.is_open() == 0)
 	{
 		// failed to load the file
@@ -206,7 +206,7 @@ void  BVH::Load(const char * bvh_file_name )
 			// create a new joint ...
 			new_joint = new Joint();
 			
-			new_joint->index = m_Joints.size();
+			new_joint->index = static_cast<int>(m_Joints.size());
 			new_joint->parent = joint;
 			new_joint->has_site = false;
 
@@ -292,7 +292,7 @@ void  BVH::Load(const char * bvh_file_name )
 				Channel* channel = new Channel();
 
 				channel->joint = joint;
-				channel->index = m_Channels.size();
+				channel->index = static_cast<int>(m_Channels.size());
 				m_Channels.push_back(channel);
 
 				joint->channels[i] = channel;
@@ -350,7 +350,7 @@ void  BVH::Load(const char * bvh_file_name )
 	m_Interval = atof( token );
 
 	// save off the number of channels ...
-	m_NumChannels = m_Channels.size();
+	m_NumChannels = static_cast<int>(m_Channels.size());
 
 	// create a motion array to accomodate the number 
 	// of frames and the number of channels in the BVH section
@@ -399,11 +399,13 @@ void  BVH::RenderFigure(int frameNum, float scale)
 {
 	if (m_bRawData == true)
 	{
-		RenderFigure( m_Joints[0], m_pMotion + frameNum * m_NumChannels, scale );
+		if (m_Joints.size() > 0)
+			RenderFigure( m_Joints[0], m_pMotion + frameNum * m_NumChannels, scale );
 	}
 	else
 	{
-		RenderFigure(m_Joints[0], m_pAnimData + frameNum * m_NumChannels, scale);
+		if (m_Joints.size() > 0)
+			RenderFigure(m_Joints[0], m_pAnimData + frameNum * m_NumChannels, scale);
 	}
 }
 
@@ -422,17 +424,22 @@ void  BVH::RenderFigure(int frameNum, int nextFrame, float scale, float time)
 {
 	if (m_bRawData == true)
 	{
-		RenderFigureInterp(m_Joints[0], 
-			m_pMotion + frameNum * m_NumChannels,
-			m_pMotion + nextFrame * m_NumChannels,
-			scale, time);
+		if (m_Joints.size())
+		{
+			RenderFigureInterp(m_Joints[0],	m_pMotion + frameNum * m_NumChannels,
+								m_pMotion + nextFrame * m_NumChannels,
+								scale, time);
+		}
 	}
 	else
 	{
-		RenderFigureInterp(m_Joints[0], 
-			m_pAnimData + frameNum * m_NumChannels,
-			m_pAnimData + nextFrame * m_NumChannels,
-			scale, time);
+		if (m_Joints.size())
+		{
+			RenderFigureInterp(m_Joints[0],
+				m_pAnimData + frameNum * m_NumChannels,
+				m_pAnimData + nextFrame * m_NumChannels,
+				scale, time);
+		}
 	}
 }
 
@@ -811,12 +818,12 @@ void BVH::SetBoneColour(string jointName, float time, float r, float g, float b)
 void BVH::StripBVHFile(float amount)
 {
 	const float amt = 10;
-	float totalTime = m_Interval * m_NumFrames;			// total time in seconds
+	float totalTime = static_cast<float>(m_Interval * m_NumFrames);			// total time in seconds
 
 
 	if (m_NumFrames > 200)
 	{
-		int numFrames = m_NumFrames / amt;
+		int numFrames = static_cast<int>(m_NumFrames / amt);
 		int bufferSize = numFrames * m_NumChannels * 2;
 
 		m_pAnimData = new double[bufferSize];

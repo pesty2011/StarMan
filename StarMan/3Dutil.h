@@ -209,7 +209,7 @@ struct tRotMatrix
 //### Bunch of inline functions for basic 3D tasks...
 inline float distance(const t3Point& a, const t3Point& b)
 {
-	return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
+	return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
 }
 
 //### Bunch of inline functions for basic 3D tasks...
@@ -246,9 +246,9 @@ inline void TransposeRotation(tRotMatrix& d, const tRotMatrix& s)
 inline void BuildRotation(tRotMatrix& d, const tEulerAngle& r)
 {
 	float sa, ca, sb, cb, sg, cg;
-	sa = sin(r.a); ca = cos(r.a);
-	sb = sin(r.b); cb = cos(r.b);
-	sg = sin(r.g); cg = cos(r.g);
+	sa = sinf(r.a); ca = cosf(r.a);
+	sb = sinf(r.b); cb = cosf(r.b);
+	sg = sinf(r.g); cg = cosf(r.g);
 
 	d.e11 = cb * cg;
 	d.e12 = sa * sb * cg - ca * sg;
@@ -280,7 +280,7 @@ inline float safeatan(float a, float b)
 {
 	if (fabs(b) > 1e-20 * fabs(a))
 	{
-		return atan(a / b);
+		return atanf(a / b);
 	}
 	else
 	{
@@ -307,13 +307,13 @@ inline void UnwindRotation(tEulerAngle& r, const tRotMatrix& m)
 	float sa, ca, sb, cb, sg, cg;
 
 	r.a = safeatan(m.e32, m.e33);
-	sa = sin(r.a); ca = cos(r.a);
+	sa = sinf(r.a); ca = cosf(r.a);
 
 	r.b = safeatan(-sa * m.e31, m.e32);
-	sb = sin(r.b); cb = cos(r.b);
+	sb = sinf(r.b); cb = cosf(r.b);
 
 	r.g = safeatan(m.e21, m.e11);
-	sg = sin(r.g); cg = cos(r.g);
+	sg = sinf(r.g); cg = cosf(r.g);
 
 	if ((sb > 0) != (-m.e31 > 0))
 	{
@@ -363,9 +363,9 @@ inline void BuildRotationYXZ(tRotMatrix& d, const tEulerAngle& r)
 {
 	float sa, ca, sb, cb, sg, cg;
 
-	sa = sin(r.a); ca = cos(r.a);
-	sb = sin(r.b); cb = cos(r.b);
-	sg = sin(r.g); cg = cos(r.g);
+	sa = sinf(r.a); ca = cosf(r.a);
+	sb = sinf(r.b); cb = cosf(r.b);
+	sg = sinf(r.g); cg = cosf(r.g);
 
 	d.e11 = +ca * cg + sa * sb * sg;
 	d.e12 = +sa * cg - ca * sb * sg;
@@ -384,13 +384,13 @@ inline void UnwindRotationYXZ(tEulerAngle& r, const tRotMatrix& m)
 	float sa, ca, sb, cb, sg, cg;
 
 	r.a = safeatan(-m.e21, m.e22);
-	sa = sin(r.a); ca = cos(r.a);
+	sa = sinf(r.a); ca = cosf(r.a);
 
 	r.b = safeatan(sa * m.e23, -m.e21);
-	sb = sin(r.b); cb = cos(r.b);
+	sb = sinf(r.b); cb = cosf(r.b);
 
 	r.g = safeatan(m.e13, m.e33);
-	sg = sin(r.g); cg = cos(r.g);
+	sg = sinf(r.g); cg = cosf(r.g);
 
 	if ((sb > 0) != (m.e23 > 0))
 	{
